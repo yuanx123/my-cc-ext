@@ -17,6 +17,7 @@ agents/cc-ext-dev/AGENT.md              # Agent: Claude Code 扩展开发专家
 agents/feature-dev/AGENT.md             # Agent: 功能开发流水线编排
 agents/superpowers-planner/AGENT.md     # Agent: 设计+计划流水线
 agents/fix/AGENT.md                    # Agent: 缺陷修复流水线编排
+agents/cleanup-node/AGENT.md             # Agent: node 僵尸进程清理
 skills/gen-pgsql-ddl/                       # Skill: PostgreSQL DDL 生成
 skills/gen-pgsql-ddl/SKILL.md              #   主指令（快速参考）
 skills/gen-pgsql-ddl/REFERENCE.md          #   列定义、COMMENT、GRANT 完整规则
@@ -118,6 +119,17 @@ Claude Code 扩展开发专家。覆盖 Claude Code 全部扩展机制：Skill�
 
 详细流程见 `agents/fix/AGENT.md`。
 
+### Agent: cleanup-node
+
+node 僵尸进程清理专家。针对 Windows 上 Claude Code 通过 `npx -y` 启动 MCP Server 子进程、关闭终端后残留的问题。核心能力：
+
+- **进程探查** — 通过 PowerShell `Get-CimInstance` 获取所有 node 进程的 PID、启动时间、内存占用、完整命令行
+- **智能分类** — 按命令行特征自动分类：当前会话 MCP（保留）、僵尸 MCP（清理）、ACP daemon（默认保留）、opencode 工具（默认保留）、其他 node 应用（默认保留）
+- **安全清理** — 先展示分类汇总和明细表格，用户确认后才执行 `Stop-Process`，禁止一刀切杀进程
+- **内存释放报告** — 清理前后对比，输出进程数和内存占用的变化
+
+详细流程见 `agents/cleanup-node/AGENT.md`。
+
 ### Skill: gen-java-enum
 
 Java `code ↔ msg` 枚举生成模板。自动探测项目包路径，生成含 `getCodeByMsg`/`getMsgByCode` 双向查找的枚举类。
@@ -196,11 +208,12 @@ Agent（独立子进程）
   ├── cc-ext-dev：扩展开发（探查 → 生成 Skill/Agent/Plugin）
   ├── feature-dev：功能开发流水线（PRD → Spec → Plan → 编码→审查→修复）
   ├── fix：缺陷修复流水线（Bug 报告 → 根因定位 → 复现→修复→审查→报告）
-  └── superpowers-planner：设计规划（头脑风暴→Spec→Plan）
+  ├── superpowers-planner：设计规划（头脑风暴→Spec→Plan）
+  └── cleanup-node：node 僵尸进程清理（探查→分类→确认→清理→报告）
 ```
 
 - **Skill（10 个）**：内联执行，自动触发，覆盖代码生成、质量保障、流程编排
-- **Agent（5 个）**：独立子进程，根据用户输入自动匹配委托，探查项目上下文后执行复杂多步骤任务
+- **Agent（6 个）**：独立子进程，根据用户输入自动匹配委托，探查项目上下文后执行复杂多步骤任务
 
 ## Agent 自动路由
 
@@ -213,6 +226,7 @@ Agent（独立子进程）
 | 功能开发流水线（已有 PRD → 设计→计划→编码→审查） | `my-ext:feature-dev:feature-dev` | 开发功能、实现需求、按PRD开发 |
 | 复杂缺陷修复（跨模块排查、根因不明） | `my-ext:fix:fix` | 排查bug、复杂bug、深入看一下、跨模块 |
 | 设计规划（原始需求→头脑风暴→方案对比→计划） | `my-ext:superpowers-planner:superpowers-planner` | 设计方案、规划、头脑风暴、需求分析 |
+| node 僵尸进程清理（Windows 上 Claude Code 残留 node 进程清理、内存释放） | `my-ext:cleanup-node:cleanup-node` | 清理node、cleanup node、kill mcp、清理进程、node zombie、kill zombie、内存占用高 |
 
 **判断标准**：
 - 用户请求涉及**多步骤、跨文件、需要独立上下文**的复杂任务 → 自动使用 `Agent` 工具委托
