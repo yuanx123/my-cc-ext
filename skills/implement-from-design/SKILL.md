@@ -39,6 +39,7 @@ Lombok 使用状态影响：构造器注入写法、getter/setter 生成方式�
 - **分层结构**：通过目录结构推断模块划分和包路径
 
 > **核心原则**：项目规则 > 依赖探测 > 通用规则。实现应与项目实际技术栈一致，不要引入项目未使用的框架或约定。
+> **产出语言**：同步更新或产出的文档、注释一律使用简体中文（代码注释、README、DDL 注释等）；代码标识符、命令、路径字符串保持原文。
 
 ---
 
@@ -48,8 +49,8 @@ Lombok 使用状态影响：构造器注入写法、getter/setter 生成方式�
 
 先确认设计文档位置，按优先级搜索：
 
-1. 用户显式指定的文档路径
-2. `doc/features/<feature-name>/` 目录下的设计文档和实施计划（`feature-dev` 输出）
+1. 交接方（feature-dev / superpowers-planner）传入的 `plan_file` / `design_file` 完整路径，或用户显式指定的文档路径（完整路径已含 `<yyyy-MM>/`，优先直接使用）
+2. `doc/features/<yyyy-MM>/<feature-name>/` 功能月目录中的设计文档和实施计划（`feature-dev` 输出；在 `doc/features/` 顶层各 `<yyyy-MM>/` 下定位 `<feature-name>` 功能目录，忽略同夹 `archive/`，多版本并存时取最新 `<yyyy-MM-dd>`）
 3. `doc/plan/` 目录下的实施计划
 4. `doc/design/` 目录下的设计文档
 5. `doc/` 或 `docs/` 目录下的设计文档

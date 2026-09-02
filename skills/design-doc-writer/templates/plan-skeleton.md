@@ -1,13 +1,16 @@
 # 实施计划（Plan）模板
 
-> 用法：superpowers-planner 编写 `doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md` 前，必须优先读取本文件，按以下模板输出任务与波次。
+> 用法：superpowers-planner / feature-dev 编写 `doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md`（`<yyyy-MM>` 为当前年月第一层目录，如 `2026-09`，`<feature-name>` 功能名目录在其下）前，必须优先读取本文件，按以下模板输出任务与波次。
+> 目录约定：产出以 `doc/features/<yyyy-MM>/<feature-name>/` 为功能月目录（`<yyyy-MM>` 年月为第一层、`<feature-name>` 功能名在年月下），设计/计划文档与 DDL/SQL 附属资源（同夹 `sql/`）均在其中；归档在 `doc/features/<yyyy-MM>/<feature-name>/archive/`（平铺，只用于当月夹内过时版本）。
+> 提交约定：产出文档与实现代码一律留工作区交用户审阅，**不自动执行 git add / git commit**；任何提交须用户明确许可。
+> 语言约定：产出文档（设计/计划/README/DDL 注释等）一律使用简体中文；代码标识符、命令、路径字符串保持原文。
 
 ## 计划文档头部
 
 ```markdown
 # <功能名称> 实施计划
 
-> **设计文档**: doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md
+> **设计文档**: doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md
 > **目标**: <一句话>
 > **架构**: <2-3 句话>
 > **技术栈**: <按 CLAUDE.md/AGENTS.md 实际探测结果>
@@ -122,12 +125,9 @@ mvn -pl pare-lmp-integrate-component -am test -Dtest=XxxServiceTest#shouldReturn
 ```
 预期：PASS
 
-- [ ] **步骤 5：提交**
+- [ ] **步骤 5：留工作区待审阅（不自动提交）**
 
-```bash
-git add src/test/.../XxxServiceTest.java src/main/.../XxxServiceImpl.java
-git commit -m "feat(xxx): add template validation"
-```
+实现完成且测试通过后，本步骤**不执行任何 git add / git commit**：文件留在工作区，与设计/计划文档一起交用户审阅；提交与否由用户决定，仅在用户明确指示时才执行 git add / git commit。
 ````
 
 ## 并行执行波次模板

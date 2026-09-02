@@ -39,10 +39,10 @@ permissionMode: acceptEdits
 
 ### 状态文件（最高优先级）
 
-为支持跨会话恢复，每个功能目录维护一个状态文件：
+为支持跨会话恢复，功能月目录 `doc/features/<yyyy-MM>/<feature-name>/`（`<yyyy-MM>` 当前年月为第一层，功能名目录在其下）维护一个状态文件：
 
 ```
-doc/features/<feature-name>/.feature-dev-state.md
+doc/features/<yyyy-MM>/<feature-name>/.feature-dev-state.md
 ```
 
 状态文件格式：
@@ -53,8 +53,8 @@ doc/features/<feature-name>/.feature-dev-state.md
 feature: <feature-name>
 sub_feature: <sub-feature>
 prd: <PRD 路径或用户输入摘要>
-design_file: doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md
-plan_file: doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md
+design_file: doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md
+plan_file: doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md
 workdir: current | .claude/worktrees/<feature-name>
 base_ref: <origin/master | origin/main | HEAD | 当前分支 upstream>
 branch: <当前开发分支>
@@ -72,23 +72,25 @@ info: <N>
 last_updated: <yyyy-MM-dd HH:mm>
 ```
 
+> 约定：`design_file` / `plan_file` 记录**相对仓库根**的完整路径，其中 `<yyyy-MM>` 为文档所在「当前年月」第一层目录（如 `2026-09`），`<feature-name>` 功能名目录位于其下，形如 `doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md`。
+
 规则：
-- 一次 feature-dev 流程只推进一个 `sub_feature`；同一 `feature` 目录可以包含多组 `*-design.md` / `*-plan.md`
+- 一次 feature-dev 流程只推进一个 `sub_feature`；同一功能月目录 `doc/features/<yyyy-MM>/<feature-name>/` 可以包含多组 `*-design.md` / `*-plan.md`（按日期前缀区分不同迭代）
 - 状态文件中的 `sub_feature`、`design_file`、`plan_file` 是当前正在推进的唯一子功能；切换子功能前必须先确认当前状态是否已完成或中止
 - 每次调用先读取 `.feature-dev-state.md`；如果存在，以状态文件判断当前阶段
-- 如果状态文件不存在，根据已有 `*-design.md` / `*-plan.md` 推断阶段，并初始化状态文件
+- 如果状态文件不存在，在 `doc/features/<yyyy-MM>/<feature-name>/` 内查找状态文件并扫描该目录中的 `*-design.md` / `*-plan.md` 推断阶段并初始化状态文件；**忽略同夹 `archive/`** 内归档文件（视为历史，不作当前推断依据）。若该功能历史工作分散在多个功能月目录（`doc/features/*/<feature-name>/`）或多个版本无法唯一推断，以最新的 `<yyyy-MM>/<yyyy-MM-dd>` 为当前进行中文档，并向用户确认后再初始化
 - 每完成一个阶段，必须更新状态文件，再 STOP 或进入下一阶段
 - 用户要求“修改设计”或“调整计划”时，回退对应状态，例如 `design: pending` 或 `plan: pending`
 - `.feature-dev-state.md` 是本地状态文件，**不提交 git**（加入 `.gitignore` 或不做 `git add`），避免跨会话恢复状态污染仓库历史
-- 功能目录下建立 `archive/` 归档目录：**已完成/过时的 design、plan 移入 `doc/features/<feature-name>/archive/`**，当前进行中的文档保留在功能目录根，避免根目录堆积
+- 功能月目录 `doc/features/<yyyy-MM>/<feature-name>/` 下建立 `archive/` 归档目录：**当月已完成/过时的 design、plan 移入 `doc/features/<yyyy-MM>/<feature-name>/archive/`**（平铺存放，避免嵌套过深）。由于年月已隔离跨月，`archive/` 只用于当月夹内过时版本；当前进行中的文档保留在功能月目录内
 
 ### 阶段检测（每次调用必须先执行）
 
-优先根据 `.feature-dev-state.md` 判断当前阶段；没有状态文件时，再根据 `doc/features/<feature-name>/` 目录下已有文件推断：
+优先根据 `.feature-dev-state.md` 判断当前阶段；没有状态文件时，再在 `doc/features/<yyyy-MM>/<feature-name>/` 内查找状态文件并扫描该目录中的 design/plan 文件推断（**忽略同夹 `archive/`**）：
 
 | 检测条件 | 当前阶段 | 执行动作 |
 |----------|----------|----------|
-| 无状态文件，且不存在 design.md/plan.md | **阶段 1：生成设计文档** | 初始化状态，执行第二步，完成后 **STOP** |
+| 无状态文件，且无可推断的 design/plan | **阶段 1：生成设计文档** | 初始化状态，执行第二步，完成后 **STOP** |
 | `design: pending` 或存在 `*-design.md` 但状态未记录 | **阶段 1：生成/确认设计文档** | 执行第二步，完成后更新 `design: done` 并 **STOP** |
 | `design: done` 且 `plan: pending` | **阶段 2：生成实施计划** | 执行第三步，完成后更新 `plan: done` 并 **STOP** |
 | `plan: done` 且 `workdir_confirmed: pending` | **阶段 3：确认开发目录** | 执行第四步，完成后更新 `workdir_confirmed: done` |
@@ -129,21 +131,23 @@ PRD → 设计文档(Spec) → 实施计划(Plan) → [确认开发目录] → i
 1. **需求分析** — 从 PRD 提取功能范围、业务规则、边界条件
 2. **方案选择**（可选）— 仅在 PRD 允许多种实现路径时，列出方案对比及推荐
 3. **架构设计** — 模块划分、调用链、关键设计决策
-4. **数据模型** — 新增表、字段、关系（委托 `gen-pgsql-ddl` 生成 DDL，脚本输出到 `doc/features/<feature-name>/sql/`）
+4. **数据模型** — 新增表、字段、关系（委托 `gen-pgsql-ddl` 生成 DDL，脚本输出到 `doc/features/<yyyy-MM>/<feature-name>/sql/`）
 5. **API 设计** — 接口路径、方法签名、请求/响应 DTO
 6. **错误处理** — 异常场景、错误码、用户提示
 7. **测试策略** — 单元测试、集成测试覆盖范围
 8. **验收标准** — 可验证的完成条件
 
-**输出路径**：`doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md`
+**输出路径**：`doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md`
 
-> 命名规则：
+> 目录与命名规则：
+> - 产出按「当前时间所在年月」分目录：**第一层为 `<yyyy-MM>` 年月目录，其下为 `<feature-name>` 功能目录**（如 `doc/features/2026-09/cj-hotel-forms/`），**当月生成的文档统一保存到该功能月目录下**，功能名不再平铺散落在 `doc/features/` 根部
 > - 文件名固定为 `<yyyy-MM-dd>-<sub-feature>-design.md` / `<yyyy-MM-dd>-<sub-feature>-plan.md`
-> - 日期前缀取**当天**，格式 `yyyy-MM-dd`（如 `2026-08-28-ai-approval-result-design.md`），用于区分同一子功能的不同迭代版本
+> - 日期前缀取**当天**，格式 `yyyy-MM-dd`（如 `2026-09-02-add-breach-cancel-count-design.md`），用于区分同一子功能的不同迭代版本
 > - `<sub-feature>` 用接口名或功能模块名（如 `add-agent-info`、`list-agent-infos`），保持英文 kebab-case
-> - 已完成/过时的 design、plan 归档到 `doc/features/<feature-name>/archive/`，当前进行中的文档保留在根目录
-> - 首次生成时同时创建 `README.md` 索引文件；若同一 `feature` 下已有多个子功能，README 负责列出所有子功能及其 design/plan 路径（归档文件标注 `archive/` 位置）
-> - 与 `superpowers-planner` 共用 `doc/features/<feature-name>/` 输出目录。如果该目录下已有对应 design.md（`<yyyy-MM-dd>-<sub-feature>-design.md`），则直接读取使用，跳过此步骤。
+> - DDL/SQL 等附属资源保存到 `doc/features/<yyyy-MM>/<feature-name>/sql/`（目录不存在则创建，与当月 design/plan 同夹沉淀）
+> - 已完成/过时的 design、plan 归档到 `doc/features/<yyyy-MM>/<feature-name>/archive/`（平铺存放）；由于年月已隔离跨月，`archive/` 只用于当月夹内过时版本，当前进行中的文档保留在功能月目录 `doc/features/<yyyy-MM>/<feature-name>/` 内
+> - 首次在某功能某月生成文档时创建 `doc/features/<yyyy-MM>/<feature-name>/README.md` 索引文件：索引该功能该月的各子功能 design/plan（归档文件标注 `archive/` 位置）；文档间相对引用：同夹（design/plan/README）互引用相对文件名即可，跨月/归档引用写明相对仓库根完整路径
+> - 与 `superpowers-planner` 共用功能月目录 `doc/features/<yyyy-MM>/<feature-name>/`（两者同月同功能产出到同一目录）。如果对应功能月目录下已有 design.md（`doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md`，由 superpowers-planner 产出），则直接读取使用，跳过此步骤。
 
 必须包含的章节：
 
@@ -169,7 +173,7 @@ PRD → 设计文档(Spec) → 实施计划(Plan) → [确认开发目录] → i
 - 关键设计决策
 
 ## 5. 数据模型
-- 新增表 DDL（脚本输出到 `doc/features/<feature-name>/sql/`）
+- 新增表 DDL（脚本输出到 `doc/features/<yyyy-MM>/<feature-name>/sql/`）
 - 字段说明
 - 索引设计
 
@@ -202,14 +206,14 @@ PRD → 设计文档(Spec) → 实施计划(Plan) → [确认开发目录] → i
 
 设计文档写入后，输出：
 
-> 设计文档已保存到 `doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md`，请审查确认后继续。
+> 设计文档已写入工作区（**未提交 git**）：`doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md`。请审阅该文件，如需修改请告知。
 > 
 > **下一步**：确认设计文档无误后，回复"继续"进入实施计划阶段。
 
 同时更新状态文件：
 
 ```markdown
-design_file: doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md
+design_file: doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md
 design: done
 plan: pending
 ```
@@ -234,9 +238,9 @@ plan: pending
 - 如果实现依赖 design.md 中的关键结论，必须在 Plan 中摘要落地约束，不能只写“见设计文档”
 - 允许引用对应 design 文件作为背景资料，但编码任务必须以 plan.md 为主入口
 
-**输出路径**：`doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md`
+**输出路径**：`doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md`
 
-> 如果该目录下已有对应 plan.md（`<yyyy-MM-dd>-<sub-feature>-plan.md`，由 superpowers-planner 产出），则直接读取使用，跳过此步骤。
+> 目录与命名规则同「第二步：生成设计文档」：Plan 落在**功能月目录** `doc/features/<yyyy-MM>/<feature-name>/` 下，DDL/SQL 等附属资源入同夹 `sql/`。如果对应功能月目录下已有 plan.md（`doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md`，由 superpowers-planner 产出），则直接读取使用，跳过此步骤。
 
 必须包含：
 
@@ -250,7 +254,7 @@ plan: pending
 ```markdown
 # <功能名称> 实施计划
 
-> **设计文档**: doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md
+> **设计文档**: doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md
 > **目标**: <一句话>
 > **架构**: <2-3 句话>
 > **技术栈**: <按 CLAUDE.md 实际探测结果>
@@ -381,15 +385,9 @@ mvn -pl api-module -am test -Dtest=ImportRequestValidatorTest 2>&1
 ```
 预期：PASS — 2 tests passed
 
-- [ ] **步骤 5：提交**
+- [ ] **步骤 5：留工作区待审阅（不自动提交）**
 
-```bash
-git add api-module/src/main/java/com/xxx/validation/ImportRequest.java \
-        api-module/src/main/java/com/xxx/validation/ValidationResult.java \
-        api-module/src/main/java/com/xxx/validation/ImportRequestValidator.java \
-        api-module/src/test/java/com/xxx/validation/ImportRequestValidatorTest.java
-git commit -m "feat(import): add request validation"
-```
+实现完成且测试通过后，本步骤**不执行任何 git add / git commit**：文件留在工作区，与设计/计划文档一起交用户审阅；提交与否由用户决定，仅在用户明确指示时才执行 git add / git commit。
 ```
 
 ### 零占位符原则（强行约束）
@@ -437,14 +435,14 @@ git commit -m "feat(import): add request validation"
 
 计划写入后，输出：
 
-> 实施计划已保存到 `doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md`，请审查确认后继续。
+> 实施计划已写入工作区（**未提交 git**）：`doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md`。请审阅该文件，如需修改请告知。
 > 
 > **下一步**：确认实施计划无误后，回复"继续"进入开发目录确认阶段。
 
 同时更新状态文件：
 
 ```markdown
-plan_file: doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md
+plan_file: doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md
 plan: done
 workdir_confirmed: pending
 ```
@@ -518,8 +516,8 @@ review: pending
 通过 `Agent` 工具调用 `code-review` Agent，对本次编码成果做**全维度深度审查**——覆盖 `code-reviewer` skill 的全部 7 维（分层架构、ORM/DB、异常处理、安全性、代码质量、测试、日志），并检查**代码样式**与**重大逻辑缺陷**（循环内数据库操作/N+1、事务边界、并发安全、资源未释放、空指针、死循环、索引失效）。**无需再单独调用 `code-reviewer` skill**。调用时必须遵守 code-review 的「输入约定」，随任务一并传递以下上下文：
 
 - **任务背景与目标** — 本次 sub-feature 为什么做（背景）、要达成什么（目标）
-- **设计文档路径** — `design_file`（`doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md`）
-- **实施计划路径** — `plan_file`（`doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md`）
+- **设计文档路径** — `design_file`（`doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md`）
+- **实施计划路径** — `plan_file`（`doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md`）
 - **审查范围** — 本次编码涉及的文件 / git diff（未提交变更）
 
 委托时明确告知 `code-review` Agent **只审查不修改**，报告按 CRITICAL / WARNING / INFO 三级输出。
@@ -553,8 +551,8 @@ info: <N>
 ## 功能开发报告
 
 **PRD**: <路径>
-**设计文档**: doc/features/<feature-name>/<yyyy-MM-dd>-<filename>-design.md
-**实施计划**: doc/features/<feature-name>/<yyyy-MM-dd>-<filename>-plan.md
+**设计文档**: doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<filename>-design.md
+**实施计划**: doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<filename>-plan.md
 **开发分支**: <branch>
 
 ### 新增文件
@@ -582,11 +580,20 @@ last_updated: <yyyy-MM-dd HH:mm>
 ## 约束
 
 - **分阶段执行（最高优先级）**：设计（阶段1）和计划（阶段2）遇到 🛑 STOP HERE 必须停止等用户确认。编码→审查→报告（阶段4→5→6）自动连续执行，不中断
+- **产出文档一律使用简体中文**：设计文档、实施计划、README、状态文件、DDL 注释等正文与注释均用简体中文（与用户全局 CLAUDE.md「默认简体中文」一致）；代码标识符、命令、路径字符串保持原文
 - **设计→审阅→计划（强制门禁）**：设计文档完成后必须等待用户审阅通过，才能生成实施计划。绝对禁止在同一轮调用中连续产出设计文档和实施计划
 - **禁止频繁编译**：编码阶段按 Wave 批量完成文件后统一编译，禁止每写完一个文件就编译。一个 Wave 只编译 1 次，编译失败时集中修复后再编译，不得逐个文件试探性编译
 - 不做头脑风暴和方案对比——那是 `superpowers-planner` 的职责
 - 审查发现 CRITICAL 必须阻塞，不能带着 CRITICAL 问题结束
 - 所有实现严格遵循项目分层架构和编码规范
+- **注释精简口径（MUST）**：流水线产出的新增代码，其注释采用统一精简口径，不模仿旧代码参差风格（有的字段有注释、有的没有、长短不一）：
+  - 字段：一句话中文 JavaDoc 说明业务语义并带量纲/单位（如「违退数（违约退租合同数，个）」）；不要展开过程
+  - 转换/逻辑行：只注释代码不自明的一点（为什么这样写 / 业务量纲 / 边界考虑），一行以内；禁止逐行复述三目/判空等代码在做什么的过程性注释（如「空/缺失→null，非空→xxx」这类描述代码分支的）
+  - Mapper XML 列映射等本身自明处不加噪音注释
+  - 注释不写「Excel 文本 String 接收」这类对代码结构的复述；设计背景/取舍理由写入 design/plan 文档，不进代码
+  - 委托 `code-review` Agent（第六步）时，code-review 须检查本次新增代码是否符合上述口径，发现冗余/过程性注释列为风格问题反馈
 - **文档同步（强制）**：编码过程中代码与设计/计划出现偏差时，必须同步修正 `design_file` 和 `plan_file`。修正代码不修文档视为未完成
+- 设计文档、实施计划与实现代码产出后**默认不提交 git**：统一留在工作区交用户审阅；所有 git commit 必须先获得用户明确许可，在用户审阅并明确指示前，不执行任何 git add / git commit
+- 产出文档必须带「当前年月」层级：Spec/Plan 写入 `doc/features/<yyyy-MM>/<feature-name>/`（年月为第一层、功能名在年月下），附属资源入同夹 `sql/`，不得直接散落在 `doc/features/` 根部或年月目录根部
 - `.feature-dev-state.md` 状态文件**不提交 git**，写入 `.gitignore` 或不做 `git add`
-- 已完成/过时的 design、plan 移入 `doc/features/<feature-name>/archive/` 归档，当前进行中的文档保留在功能目录根
+- 已完成/过时的 design、plan 移入 `doc/features/<yyyy-MM>/<feature-name>/archive/` 归档（平铺；年月已隔离跨月，`archive/` 只用于当月夹内过时版本），当前进行中的文档保留在功能月目录内

@@ -77,7 +77,7 @@ PostgreSQL DDL 生成模板。关键约定：
 - schema 必须询问用户，不默认写死
 - 授权角色优先读取项目现有约定，无法确定时询问用户，不使用跨项目硬编码默认角色
 - 默认生成非破坏性建表脚本；只有用户明确确认重建目标环境和表名时才加入 `DROP TABLE IF EXISTS`
-- 输出到 `doc/features/<feature-name>/sql/` 目录，文件名 `<yyyy-MM-dd>-<业务>-init.sql`
+- 输出到 `doc/features/<yyyy-MM>/<feature-name>/sql/` 目录（`<yyyy-MM>` 为当前年月第一层目录，功能名目录在其下），文件名 `<yyyy-MM-dd>-<业务>-init.sql`
 
 详细模板见 `skills/gen-pgsql-ddl/SKILL.md`。
 
@@ -97,7 +97,7 @@ Claude Code 扩展开发专家。覆盖 Claude Code 全部扩展机制：Skill�
 
 ### Agent: feature-dev
 
-功能开发流水线编排者。从已有 PRD 出发，串联 **设计文档（Spec） → 实施计划（Plan） → 开发目录确认 → implement-from-design 编码 → code-review Agent 全维度深度审查 → 修复 CRITICAL → 开发报告** 的完整流程。审查环节统一委托 `code-review` Agent（全维度：覆盖 `code-reviewer` skill 的 7 维——分层架构、ORM/DB、异常处理、安全性、代码质量、测试、日志——以及代码样式与循环内数据库操作/N+1、事务、并发、资源、空指针、死循环、索引失效等重大逻辑缺陷），调用时必须传递任务背景/目标、设计文档与实施计划路径。文档统一输出到 `doc/features/<feature-name>/`，一次只推进一个 `sub-feature`，并通过 `.feature-dev-state.md` 状态文件支持跨会话恢复。
+功能开发流水线编排者。从已有 PRD 出发，串联 **设计文档（Spec） → 实施计划（Plan） → 开发目录确认 → implement-from-design 编码 → code-review Agent 全维度深度审查 → 修复 CRITICAL → 开发报告** 的完整流程。审查环节统一委托 `code-review` Agent（全维度：覆盖 `code-reviewer` skill 的 7 维——分层架构、ORM/DB、异常处理、安全性、代码质量、测试、日志——以及代码样式与循环内数据库操作/N+1、事务、并发、资源、空指针、死循环、索引失效等重大逻辑缺陷），调用时必须传递任务背景/目标、设计文档与实施计划路径。设计/计划文档统一输出到 `doc/features/<yyyy-MM>/<feature-name>/`（年月为第一层、功能名在年月下，DDL/SQL 附属资源入同夹 `sql/`），一次只推进一个 `sub-feature`，并通过位于 `doc/features/<yyyy-MM>/<feature-name>/` 的 `.feature-dev-state.md` 状态文件支持跨会话恢复；产出文档一律使用简体中文；产出文档与实现代码默认**不自动提交 git**，留在工作区交用户审阅，提交须用户明确许可。
 
 与 `superpowers-planner` 的区别：`feature-dev` 从**已有 PRD** 出发，不需要头脑风暴；`superpowers-planner` 从**原始需求**出发，包含头脑风暴和方案对比。
 
@@ -105,7 +105,7 @@ Claude Code 扩展开发专家。覆盖 Claude Code 全部扩展机制：Skill�
 
 ### Agent: superpowers-planner
 
-设计+计划流水线。从**原始需求**出发，三阶段：**头脑风暴（需求澄清 + 方案对比）→ 设计规范 Spec → 实施计划 Plan**（含 TDD 任务拆分、波次规划、依赖矩阵）。输出到 `doc/features/<feature-name>/`（与 `feature-dev` 共用目录），一次只规划一个 `sub-feature`。完成后交接给 `feature-dev` 执行编码流水线，审查环节由 `code-review` Agent 全维度深度审查。
+设计+计划流水线。从**原始需求**出发，三阶段：**头脑风暴（需求澄清 + 方案对比）→ 设计规范 Spec → 实施计划 Plan**（含 TDD 任务拆分、波次规划、依赖矩阵）。输出到 `doc/features/<yyyy-MM>/<feature-name>/`（年月为第一层、功能名在年月下，与 `feature-dev` 共用目录约定），一次只规划一个 `sub-feature`。产出文档一律使用简体中文；产出文档默认**不自动提交 git**，留在工作区交用户审阅，提交由用户决定。完成后交接给 `feature-dev` 执行编码流水线，审查环节由 `code-review` Agent 全维度深度审查。
 
 与 `feature-dev` 的区别：`superpowers-planner` 适合需求不明确、需要方案对比的场景；`feature-dev` 适合已有 PRD、直接进入设计+计划的场景。
 

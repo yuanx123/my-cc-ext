@@ -26,7 +26,7 @@ gen-pgsql-ddl/
 4. 从项目配置或已有 DDL 获取授权角色；无法确定时询问用户，用户不需要授权时省略 GRANT
 5. 从 `template/` 复制对应模板
 6. 按 REFERENCE.md 中的列定义规则替换 `<占位符>`
-7. 输出到 `doc/features/<feature-name>/sql/` 目录（`<feature-name>` 为对应功能目录名；不属于功能开发流程时向用户确认目标目录）
+7. 输出到 `doc/features/<yyyy-MM>/<feature-name>/sql/` 目录（`<yyyy-MM>` 为生成当天所在年月（如 `2026-09`，`doc/features/` 下第一层目录），`<feature-name>` 为其下功能目录名；目录不存在则创建；不属于功能开发流程时向用户确认目标目录）
 
 ## 核心规则
 
@@ -73,9 +73,10 @@ gen-pgsql-ddl/
 
 ### 文件
 
-- 存放路径 `doc/features/<feature-name>/sql/`，文件名 `<yyyy-MM-dd>-<业务>-init.sql`
+- 存放路径 `doc/features/<yyyy-MM>/<feature-name>/sql/`（`<yyyy-MM>` = 生成当天年月，`doc/features/` 下第一层目录，功能名目录在其下；目录不存在则创建），文件名 `<yyyy-MM-dd>-<业务>-init.sql`
 - 默认建表脚本不得包含 `DROP TABLE`、`TRUNCATE` 等破坏性语句
 - 重建模式必须在脚本头部标注目标环境和用户确认结果
 - ALTER TABLE 不需要重复 GRANT
+- 产出 DDL 脚本的注释（`COMMENT ON TABLE/COLUMN` 文案等）一律使用简体中文；schema、表名、列名等 SQL 标识符保持英文原文
 
 > 完整规则见 [REFERENCE.md](REFERENCE.md)，实际范例见 [EXAMPLES.md](EXAMPLES.md)

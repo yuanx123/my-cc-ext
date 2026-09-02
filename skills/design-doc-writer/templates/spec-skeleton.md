@@ -1,6 +1,8 @@
 # 设计规范（Spec）骨架模板
 
-> 用法：superpowers-planner 写入 `doc/features/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md` 前，必须按本骨架输出完整章节。某章节不适用时显式说明"不适用/无需"，不得省略整个骨架。
+> 用法：superpowers-planner / feature-dev 写入 `doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md`（`<yyyy-MM>` 为当前年月第一层目录，如 `2026-09`，`<feature-name>` 功能名目录在其下）前，必须按本骨架输出完整章节。某章节不适用时显式说明"不适用/无需"，不得省略整个骨架。
+> 提交约定：设计文档写入工作区后**不自动提交 git**，留待用户审阅；是否提交由用户决定。
+> 语言约定：产出文档一律使用简体中文（正文、标题、注释、README、DDL 注释等）；代码标识符、命令、路径字符串保持原文。
 
 ```markdown
 # <功能名称> 设计规范
@@ -46,7 +48,7 @@
 ## 6. 数据模型
 - 表结构 / 字段说明
 - **字段映射**：如为 Excel/文件导入需求，须提供「Excel 列 → 表字段」映射表（Excel 列、表字段、转换方式，标注同名/类型转换/语义改名/丢弃）
-- **DDL**：涉及建表、加列、改表时，DDL 脚本输出到 `doc/features/<feature-name>/sql/` 并在本文内联；如无需 DDL 则显式说明"无需 DDL"
+- **DDL**：涉及建表、加列、改表时，DDL 脚本输出到 `doc/features/<yyyy-MM>/<feature-name>/sql/` 并在本文内联；如无需 DDL 则显式说明"无需 DDL"
 - **DML**：涉及初始化数据、字典、码值映射时，附 DML SQL；如无需 DML 则显式说明"无需 DML"
 
 ## 7. 非功能需求

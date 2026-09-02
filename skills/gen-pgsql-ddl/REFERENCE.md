@@ -8,7 +8,7 @@
 | 操作模式 | 默认仅创建；删除并重建必须由用户明确确认目标环境和表名 |
 | DML 授权角色 | 优先读取项目已有 DDL/配置；无法确定时询问用户；不需要授权时省略 |
 | QRY 授权角色 | 优先读取项目已有 DDL/配置；无法确定时询问用户；不需要授权时省略 |
-| 输出文件名 | `doc/features/<feature-name>/sql/<yyyy-MM-dd>-<业务>-init.sql`，业务名使用英文 kebab-case |
+| 输出文件名 | `doc/features/<yyyy-MM>/<feature-name>/sql/<yyyy-MM-dd>-<业务>-init.sql`，业务名使用英文 kebab-case（`<yyyy-MM>` = 生成当天年月，`doc/features/` 下第一层目录，功能名目录在其下；目录不存在则创建） |
 
 ## 列定义
 
@@ -43,6 +43,7 @@
 - 枚举/类型列在注释中标注可选值：`'报表类型(operator_balance_sheet/operator_profit_statement/operator_cash_flow)'`
 - 外键关联列在注释中注明关联关系：`'关联 lmp_operator_import_record.data_number'`
 - `COMMENT ON TABLE` 一行描述表用途
+- 注释文案一律使用简体中文；schema、表名、列名等 SQL 标识符保持英文原文
 
 ## GRANT
 
@@ -57,7 +58,7 @@
 
 ## 文件
 
-- 存放路径：`doc/features/<feature-name>/sql/` 目录（`<feature-name>` 为对应功能目录名；不属于功能开发流程时向用户确认目标目录）
+- 存放路径：`doc/features/<yyyy-MM>/<feature-name>/sql/` 目录（`<yyyy-MM>` = 生成当天年月，`doc/features/` 下第一层目录；`<feature-name>` 为其下功能目录名；目录不存在则创建；不属于功能开发流程时向用户确认目标目录）
 - 默认脚本从 `CREATE TABLE` 开始，不包含任何删除语句
 - 仅在用户明确确认“删除并重建”后加入 `DROP TABLE IF EXISTS`，并在脚本头部记录目标环境和确认信息
 - 文件名：`<yyyy-MM-dd>-<业务>-init.sql`
