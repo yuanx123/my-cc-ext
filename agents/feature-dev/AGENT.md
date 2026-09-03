@@ -81,7 +81,7 @@ last_updated: <yyyy-MM-dd HH:mm>
 - 如果状态文件不存在，在 `doc/features/<yyyy-MM>/<feature-name>/` 内查找状态文件并扫描该目录中的 `*-design.md` / `*-plan.md` 推断阶段并初始化状态文件；**忽略同夹 `archive/`** 内归档文件（视为历史，不作当前推断依据）。若该功能历史工作分散在多个功能月目录（`doc/features/*/<feature-name>/`）或多个版本无法唯一推断，以最新的 `<yyyy-MM>/<yyyy-MM-dd>` 为当前进行中文档，并向用户确认后再初始化
 - 每完成一个阶段，必须更新状态文件，再 STOP 或进入下一阶段
 - 用户要求“修改设计”或“调整计划”时，回退对应状态，例如 `design: pending` 或 `plan: pending`
-- `.feature-dev-state.md` 是本地状态文件，**不提交 git**（加入 `.gitignore` 或不做 `git add`），避免跨会话恢复状态污染仓库历史
+- `.feature-dev-state.md` 状态文件与当月的 design/plan 等产出文档一同入库（不写入 `.gitignore`、不做排除）；与其它产出一致，默认不自动提交，是否提交由用户审阅后决定
 - 功能月目录 `doc/features/<yyyy-MM>/<feature-name>/` 下建立 `archive/` 归档目录：**当月已完成/过时的 design、plan 移入 `doc/features/<yyyy-MM>/<feature-name>/archive/`**（平铺存放，避免嵌套过深）。由于年月已隔离跨月，`archive/` 只用于当月夹内过时版本；当前进行中的文档保留在功能月目录内
 
 ### 阶段检测（每次调用必须先执行）
@@ -595,5 +595,5 @@ last_updated: <yyyy-MM-dd HH:mm>
 - **文档同步（强制）**：编码过程中代码与设计/计划出现偏差时，必须同步修正 `design_file` 和 `plan_file`。修正代码不修文档视为未完成
 - 设计文档、实施计划与实现代码产出后**默认不提交 git**：统一留在工作区交用户审阅；所有 git commit 必须先获得用户明确许可，在用户审阅并明确指示前，不执行任何 git add / git commit
 - 产出文档必须带「当前年月」层级：Spec/Plan 写入 `doc/features/<yyyy-MM>/<feature-name>/`（年月为第一层、功能名在年月下），附属资源入同夹 `sql/`，不得直接散落在 `doc/features/` 根部或年月目录根部
-- `.feature-dev-state.md` 状态文件**不提交 git**，写入 `.gitignore` 或不做 `git add`
+- `.feature-dev-state.md` 状态文件与当月的 design/plan 等产出文档一同入库（不写入 `.gitignore`、不做排除）；与其它产出一致，默认不自动提交，是否提交由用户审阅后决定
 - 已完成/过时的 design、plan 移入 `doc/features/<yyyy-MM>/<feature-name>/archive/` 归档（平铺；年月已隔离跨月，`archive/` 只用于当月夹内过时版本），当前进行中的文档保留在功能月目录内

@@ -62,7 +62,7 @@ last_updated: <yyyy-MM-dd HH:mm>
 - 每完成一个阶段，必须更新状态文件，再 STOP 或进入下一阶段
 - 用户要求“修改设计”时，回退 `design: pending` 和 `plan: pending`
 - 用户要求“调整计划”时，回退 `plan: pending`
-- `.superpowers-planner-state.md` 是本地状态文件，**不提交 git**（加入 `.gitignore` 或不做 `git add`），避免跨会话恢复状态污染仓库历史
+- `.superpowers-planner-state.md` 状态文件与当月的 design/plan 等产出文档一同入库（不写入 `.gitignore`、不做排除）；与其它产出一致，默认不自动提交，是否提交由用户审阅后决定
 - 功能月目录 `doc/features/<yyyy-MM>/<feature-name>/` 下建立 `archive/` 归档目录：**当月已完成/过时的 design、plan 移入 `doc/features/<yyyy-MM>/<feature-name>/archive/`**（平铺存放，避免嵌套过深）。由于年月已隔离跨月，`archive/` 只用于当月夹内过时版本；当前进行中的文档保留在功能月目录内
 
 ### 阶段检测（每次调用必须先执行）
@@ -310,7 +310,7 @@ last_updated: <yyyy-MM-dd HH:mm>
 - 不允许在用户审查规范前进入实施计划阶段
 - Spec 和 Plan 产出后**默认不提交 git**：文档留在工作区，输出文件路径交用户审阅，由用户决定是否/何时提交
 - 所有 git commit 必须先获得用户明确许可；在用户审阅并明确指示前，不执行任何 git add / git commit
-- `.superpowers-planner-state.md` 状态文件**不提交 git**，写入 `.gitignore` 或不做 `git add`
+- `.superpowers-planner-state.md` 状态文件与当月的 design/plan 等产出文档一同入库（不写入 `.gitignore`、不做排除）；与其它产出一致，默认不自动提交，是否提交由用户审阅后决定
 - 产出文档必须带「当前年月」层级：Spec/Plan 写入 `doc/features/<yyyy-MM>/<feature-name>/`（年月为第一层、功能名在年月下），附属资源入同夹 `sql/`，不得直接散落在 `doc/features/` 根部或年月目录根部
 - 已完成/过时的 design、plan 移入 `doc/features/<yyyy-MM>/<feature-name>/archive/` 归档（平铺；年月已隔离跨月，`archive/` 只用于当月夹内过时版本），当前进行中的文档保留在功能月目录内
 - **产出文档一律使用简体中文**：Spec、Plan、README、状态文件等正文与注释均用简体中文（与用户全局 CLAUDE.md「默认简体中文」一致）；代码标识符、命令、路径字符串保持原文
