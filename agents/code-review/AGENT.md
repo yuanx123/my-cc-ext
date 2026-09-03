@@ -100,6 +100,7 @@ permissionMode: default
 - **命名规范** — 类名 PascalCase、方法/变量 camelCase、常量 UPPER_SNAKE；枚举、布尔值语义清晰；不缩写、不拼音、不中英混杂
 - **格式规范** — 缩进、换行、大括号风格与项目一致；方法过长（>50 行）提示拆分
 - **注释规范** — 类/方法 JavaDoc（中文）、关键逻辑有注释；**新增代码的注释遵守下方「注释精简口径」**；无废话注释；`TODO` / `FIXME` 标注明确
+- **简洁性规范** — **新增/改造方法与 SQL 遵守下方「代码简洁性」口径**：入参最少且内聚、优先复用既有查询/对象、SQL 谓词不冗余、较独立的分支/计算抽私有方法
 - **分层规范** — Controller / Service / Mapper 职责边界清晰；DTO / VO / Entity 使用位置正确
 - **工程规范** — 魔法数字用常量/枚举；`Optional` 用法规范；Lombok 使用一致性；日志框架统一
 - **依赖规范** — 无重复实现、无未使用导入、依赖版本统一
@@ -114,6 +115,17 @@ permissionMode: default
 - **注释不写**「Excel 文本 String 接收」这类对代码结构的复述；设计背景/取舍理由写入 design/plan 文档，不进代码
 
 > code-review 在执行时须检查本次新增代码是否符合上述口径，发现冗余/过程性注释列为风格问题反馈（归入 WARNING / INFO 级）。
+
+#### 代码简洁性（新增/改造方法与 SQL，MUST）
+
+审查**新增/改造方法**与 **SQL** 时，对照以下代码简洁性口径逐条核查（与「注释精简口径」配套，同为本次新增代码的强制审查项）：
+
+- **入参最少且内聚**：能用既有上下文对象（如请求/结果 DTO，例 ReportInfoRequest）就不拆成多个散参；不重复传入已判定或可推导的值
+- **复用**：优先复用已查询到的对象与既有 Mapper 查询，不新增无谓的全表/重复查询
+- **SQL 谓词不冗余**：外层已完成分流或键本身唯一时，内层 SQL 是否仍重复过滤（例：已按项目判运营商后，取数 SQL 仍重复传/过滤 system_id）
+- **逻辑收敛**：较独立的分支/计算抽私有方法，不硬塞进大型方法与循环内
+
+> code-review 执行时须按上述口径审查本次新增/改造方法与 SQL，命中项**必须附 `文件:行号`** 列报（通常归 WARNING / INFO；若引发性能或正确性风险，按维度 B 升级 CRITICAL）。
 
 > 样式问题通常定级 WARNING 或 INFO；仅当违反项目硬性规范且影响合入时定级 WARNING。CRITICAL 留给逻辑缺陷。
 
@@ -242,6 +254,7 @@ permissionMode: default
 - 方法 ≤ 50 行，类 ≤ 800 行（核心逻辑超出时拆分）；嵌套层次 ≤ 4 层，用 early return / guard clause 减少嵌套
 - 消除魔法数字和魔法字符串，使用命名常量或枚举
 - 变量和参数尽量不可变（`final` 关键字）；方法参数 ≤ 5 个，超过时封装为参数对象
+- 新增/改造方法（含 SQL）满足「代码简洁性（MUST）」口径：入参最少且内聚、复用既有查询/对象、SQL 谓词不冗余、逻辑收敛（详见维度 A「代码简洁性」小节，报告附 `文件:行号`）
 - 集合/数组返回空集合而非 `null`（`Collections.emptyList()`）
 - `Optional` 不用作参数或字段，只用返回值表示"可能为空"
 - Lombok：Entity/DTO 用 `@Getter`/`@Setter`/`@Data`、日志用 `@Slf4j`、构造器注入 `@RequiredArgsConstructor`（避免 `@Autowired` 字段注入）；非 Lombok：IDE 或手写 getter/setter 保持一致、`private static final Logger log = LoggerFactory.getLogger(Xxx.class);`、构造器注入优先
