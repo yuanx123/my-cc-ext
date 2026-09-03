@@ -1,21 +1,43 @@
 # 实施计划（Plan）模板
 
 > 用法：superpowers-planner / feature-dev 编写 `doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-plan.md`（`<yyyy-MM>` 为当前年月第一层目录，如 `2026-09`，`<feature-name>` 功能名目录在其下）前，必须优先读取本文件，按以下模板输出任务与波次。
+> 文档定位：Plan 面向 **agent 执行**（执行导向）；设计规范(Spec)面向**人审**，两份**独立成文、不混写**，Spec 另按 `spec-skeleton.md` 输出。
 > 目录约定：产出以 `doc/features/<yyyy-MM>/<feature-name>/` 为功能月目录（`<yyyy-MM>` 年月为第一层、`<feature-name>` 功能名在年月下），设计/计划文档与 DDL/SQL 附属资源（同夹 `sql/`）均在其中；归档在 `doc/features/<yyyy-MM>/<feature-name>/archive/`（平铺，只用于当月夹内过时版本）。
 > 提交约定：产出文档与实现代码一律留工作区交用户审阅，**不自动执行 git add / git commit**；任何提交须用户明确许可。
 > 语言约定：产出文档（设计/计划/README/DDL 注释等）一律使用简体中文；代码标识符、命令、路径字符串保持原文。
 
-## 计划文档头部
+## 计划文档头部（含版本历史）
 
 ```markdown
 # <功能名称> 实施计划
 
+> 状态：draft | active
+> 当前版本：v1.x
+> 最近更新：<yyyy-MM-dd>
 > **设计文档**: doc/features/<yyyy-MM>/<feature-name>/<yyyy-MM-dd>-<sub-feature>-design.md
 > **目标**: <一句话>
 > **架构**: <2-3 句话>
 > **技术栈**: <按 CLAUDE.md/AGENTS.md 实际探测结果>
 
+**版本历史（变更记录规约）**：任何实质修订（含临时调整）必须**追加一行**并**递增版本号**，不得覆盖旧行；「当前版本」同步为最新行版本：
+
+| 版本 | 日期 | 变更说明 |
+|------|------|---------|
+| v1.1 | <yyyy-MM-dd> | <本次变更摘要> |
+| v1.0 | <yyyy-MM-dd> | 初稿：<初始任务范围摘要> |
+
 ---
+```
+
+## 硬性约束（计划开头必列，执行 agent 先读）
+
+```markdown
+## 硬性约束
+- **禁 git 写操作**：不得执行 git add / git commit / git push（除非任务明确允许，一般一律禁止）
+- **禁连库/禁执行 DML**：不得直连数据库执行 DDL/DML（DDL/DML 交用户或 DB 运维执行）
+- **只改下列文件**：<明确列出允许创建/修改的文件清单>；清单外文件一律不动
+- **注释与代码简洁性规范**：遵循「注释精简口径（MUST）」与「代码简洁性（MUST）」（见 feature-dev 约束区）
+- **完成即留工作区**：实现完成并验证通过后不自动提交，与 design/plan 一并交用户审阅
 ```
 
 ## 文件结构映射
@@ -39,7 +61,7 @@
 
 ## 任务粒度模板
 
-每个任务是一个动作（2-5 分钟），格式：
+每个任务是一个动作（2-5 分钟），按文件给出**接口/SQL 与替换前后代码**，并附**验证命令与预期**和**验收标准**（可验证完成条件，供执行 agent 自验与审查核对）。格式：
 
 ````markdown
 ### 任务 N：<任务名>
@@ -128,6 +150,8 @@ mvn -pl pare-lmp-integrate-component -am test -Dtest=XxxServiceTest#shouldReturn
 - [ ] **步骤 5：留工作区待审阅（不自动提交）**
 
 实现完成且测试通过后，本步骤**不执行任何 git add / git commit**：文件留在工作区，与设计/计划文档一起交用户审阅；提交与否由用户决定，仅在用户明确指示时才执行 git add / git commit。
+
+**验收标准**：<可验证完成条件，如某测试通过 / 某接口返回符合预期 / 某 SQL 结果正确>
 ````
 
 ## 并行执行波次模板
@@ -154,4 +178,14 @@ mvn -pl pare-lmp-integrate-component -am test -Dtest=XxxServiceTest#shouldReturn
 ├── F2: 代码质量审查
 ├── F3: 端到端 QA
 └── F4: 范围一致性检查
+```
+
+## 范围外禁止（计划末尾必列）
+
+```markdown
+## 范围外禁止
+- <与本计划无直接关联的重构 / 优化 / 预留扩展>
+- <未列入「只改下列文件」清单的文件一律不动>
+- <超出本 plan 的接口 / 表 / 字段 / 场景>
+- <其他明确不做的动作，如连库、提交 git 等>
 ```
