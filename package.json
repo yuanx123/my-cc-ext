@@ -1,6 +1,6 @@
 {
   "name": "my-ext",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "Java development agents and shared skills for Claude Code and OpenCode",
   "type": "module",
   "main": ".opencode/plugins/my-ext.js",

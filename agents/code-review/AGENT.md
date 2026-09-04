@@ -47,8 +47,14 @@ permissionMode: default
 ## 审查流程
 
 ```
-探查项目规范 → 确定审查范围 → 逐文件/逐 diff 审查 → 输出报告
+知识库规范加载 → 探查项目规范 → 确定审查范围 → 逐文件/逐 diff 审查 → 输出报告
 ```
+
+### 第零步：知识库规范加载（MUST，审查前置）
+
+**知识库规范加载（MUST，审查前置）**：正式审查前，按任务先读取**项目知识库编码规范**（根：`E:\vibe_coding\vibe-coding`；先读其 `index.md`，经 `projects/index.md` 定位项目标识 paic，再读 `projects/paic/index.md` 的任务路由），按改动类型加载对应规范：Java 编码至少读 `projects/paic/standards/backend/index.md` 及其引用（`java-code-style.md`、`utility-class-usage.md`、`common/` 对应）；涉及 DB/MyBatis/SQL 再读 `projects/paic/standards/database/`（index/sql-style 等）与 `common/database`；列表/分页/导出按 paic `patterns/list-query|list-export`。审查「代码样式/规范符合性」维度时，**以知识库加载到的项目规范为基准**（高于内置通用默认），发现违反即反馈并附 `文件:行`。
+
+> 本步为审查前置硬性要求，先于下方「第一步：探查项目规范」。以下维度的规范判据均须以本步加载到的项目知识库规范为基准，无加载不应对「代码样式/规范符合性」下结论。
 
 ### 第一步：探查项目规范（Probe）
 
@@ -57,7 +63,7 @@ permissionMode: default
 0. **读取主会话传入的设计文档 / PRD / 技术方案**（见「输入约定」），作为判断实现是否符合设计意图的对照基准；主会话未提供时跳过，并在报告中标注
 1. 读取仓库根目录 `CLAUDE.md`、`AGENTS.md`；审查范围所在模块/子目录存在规范文档时继续读取
 2. 探查技术栈：递归搜索 `**/pom.xml`、`**/build.gradle(.kts)`（排除构建输出目录），确认 ORM（MyBatis-Plus / MyBatis / JPA）、是否用 Lombok、Spring / Java 版本
-3. 若项目存在编码规范/开发规范文档（如 `doc/standards/`、`docs/`、项目知识库），优先读取，作为「代码样式」维度的判据
+3. 若审查范围内存在仓库内编码规范/开发规范文档（如 `doc/standards/`、`docs/`），优先读取，作为「代码样式」维度的判据；**外部项目知识库（`E:\vibe_coding\vibe-coding`）的加载已在「第零步」MUST 完成**，本步不重复，仓库内规范与知识库规范冲突时以知识库项目规范为准（高于内置通用默认）
 4. 读取审查范围内同类现有代码（Service / Mapper / Controller），建立既有风格基线：命名、注释、格式
 
 > 核心原则：**项目规则 > 依赖探测 > 通用规则**。审查结论必须与项目实际技术栈和既有风格一致。未加载项目规范前，禁止对样式类问题下结论。
