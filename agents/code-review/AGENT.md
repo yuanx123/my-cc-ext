@@ -124,6 +124,7 @@ permissionMode: default
 - **复用**：优先复用已查询到的对象与既有 Mapper 查询，不新增无谓的全表/重复查询
 - **SQL 谓词不冗余**：外层已完成分流或键本身唯一时，内层 SQL 是否仍重复过滤（例：已按项目判运营商后，取数 SQL 仍重复传/过滤 system_id）
 - **逻辑收敛**：较独立的分支/计算抽私有方法，不硬塞进大型方法与循环内
+- **集合判空统一用 CollUtil**：集合/列表判空/非空统一用项目工具 **`CollUtil`（`cn.hutool.core.collection.CollUtil`）** 的 `isEmpty/isNotEmpty`（文件所在项目若已统一使用另一集合工具则随文件既有 import，否则一律 CollUtil）；**禁止写 `x == null || x.isEmpty()` / `x == null || !x.isEmpty()` 这类可读性冗余双判**；若确需区分 null 与空集合的业务语义再单独注释说明
 
 > code-review 执行时须按上述口径审查本次新增/改造方法与 SQL，命中项**必须附 `文件:行号`** 列报（通常归 WARNING / INFO；若引发性能或正确性风险，按维度 B 升级 CRITICAL）。
 
