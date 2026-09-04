@@ -1,7 +1,7 @@
 {
   "name": "my-ext",
   "displayName": "Java Development Toolchain",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "Java 开发全流程工具集。覆盖设计规划、数据库操作(DDL/DML/Entity/Mapper)、代码实现、代码审查、缺陷修复和 Claude Code 扩展开发。",
   "author": {
     "name": "yuanziquan"
