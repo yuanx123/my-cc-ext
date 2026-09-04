@@ -12,7 +12,7 @@
 ```json
 {
   "plugin": [
-    "my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.0.23"
+    "my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.0.24"
   ]
 }
 ```
