@@ -308,7 +308,7 @@ implementation: pending
 
 通过 Skill 工具调用 `implement-from-design` 技能。调用时明确要求：
 
-- **编码前同样加载知识库项目规范**：与 `code-review` Agent「第零步」一致，编码开始前先读取项目知识库编码规范（`E:\vibe_coding\vibe-coding`，经 `projects/index.md` 定位项目标识 paic、再读 `projects/paic/index.md` 任务路由，按改动类型加载 Java/DB/SQL/列表等对应规范），作为编码基准
+- **编码前加载知识库规范（MUST）**：调用 `kb-loader` Skill（`my-ext:kb-loader`，任务类型按本次改动归类），按返回清单加载项目知识库规范，作为编码基准；KB 根与项目标识由 kb-loader 自动解析（单一事实源），不写死路径/项目标识
 - 只根据 `plan_file` 完成编码和测试
 - 不输出最终开发报告
 - 如果它内部已执行过 code-reviewer 快速检查，只记录结果作参考；正式审查仍由本 Agent 第六步委托 `code-review` Agent 统一收口

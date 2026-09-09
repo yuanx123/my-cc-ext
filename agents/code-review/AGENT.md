@@ -52,7 +52,7 @@ permissionMode: default
 
 ### 第零步：知识库规范加载（MUST，审查前置）
 
-**知识库规范加载（MUST，审查前置）**：正式审查前，按任务先读取**项目知识库编码规范**（根：`E:\vibe_coding\vibe-coding`；先读其 `index.md`，经 `projects/index.md` 定位项目标识 paic，再读 `projects/paic/index.md` 的任务路由），按改动类型加载对应规范：Java 编码至少读 `projects/paic/standards/backend/index.md` 及其引用（`java-code-style.md`、`utility-class-usage.md`、`common/` 对应）；涉及 DB/MyBatis/SQL 再读 `projects/paic/standards/database/`（index/sql-style 等）与 `common/database`；列表/分页/导出按 paic `patterns/list-query|list-export`。审查「代码样式/规范符合性」维度时，**以知识库加载到的项目规范为基准**（高于内置通用默认），发现违反即反馈并附 `文件:行`。
+**知识库规范加载（MUST，审查前置）**：正式审查前，先解析并加载**项目知识库编码规范**——KB 根取用户级 `~/.claude/CLAUDE.md` 声明的「知识库根」（上下文已含则直接用）；经 `projects/index.md` 注册表按当前工作目录匹配项目标识（匹配不到视为无项目上下文，仅加载通用规范）；读对应项目 `index.md` 任务路由，按审查的改动类型加载规范（Java 编码、涉及 DB/MyBatis/SQL 加数据库规范、列表/分页/导出按项目 patterns）。解析细则以 `kb-loader` Skill 为权威（`my-ext:kb-loader`），不写死项目标识与绝对路径。审查「代码样式/规范符合性」维度以加载到的项目规范为基准（高于内置通用默认），发现违反即反馈并附 `文件:行`。
 
 **另必载（审查强制，每次运行本 Agent 必读，不得仅在主会话要求时才读）**：除上述按改动类型的 `projects/paic/` 加载外，另**必载通用 Java 必查清单 `backend/java/code-review-checklist.md`**，审查时按其逐项核对「规范符合性」维度（SQL 必须写 Mapper XML / 禁 `@Select` 注解内嵌、注释规约、失败与剔除可观测、数字引用可溯、改动同步 feature 文档等；判级约定：新代码违背明文规范至少 WARNING，不得因历史先例降级）；注释规约另见 `backend/java/development-standard.md` →「文档注释（Javadoc）」节。通用 `backend/java/` 与 paic 项目规范冲突时，**以 `projects/paic/` 项目规范为准**。
 
@@ -65,7 +65,7 @@ permissionMode: default
 0. **读取主会话传入的设计文档 / PRD / 技术方案**（见「输入约定」），作为判断实现是否符合设计意图的对照基准；主会话未提供时跳过，并在报告中标注
 1. 读取仓库根目录 `CLAUDE.md`、`AGENTS.md`；审查范围所在模块/子目录存在规范文档时继续读取
 2. 探查技术栈：递归搜索 `**/pom.xml`、`**/build.gradle(.kts)`（排除构建输出目录），确认 ORM（MyBatis-Plus / MyBatis / JPA）、是否用 Lombok、Spring / Java 版本
-3. 若审查范围内存在仓库内编码规范/开发规范文档（如 `doc/standards/`、`docs/`），优先读取，作为「代码样式」维度的判据；**外部项目知识库（`E:\vibe_coding\vibe-coding`）的加载已在「第零步」MUST 完成**，本步不重复，仓库内规范与知识库规范冲突时以知识库项目规范为准（高于内置通用默认）
+3. 若审查范围内存在仓库内编码规范/开发规范文档（如 `doc/standards/`、`docs/`），优先读取，作为「代码样式」维度的判据；**外部项目知识库（KB）的加载已在「第零步」MUST 完成**，本步不重复，仓库内规范与知识库规范冲突时以知识库项目规范为准（高于内置通用默认）
 4. 读取审查范围内同类现有代码（Service / Mapper / Controller），建立既有风格基线：命名、注释、格式
 
 > 核心原则：**项目规则 > 依赖探测 > 通用规则**。审查结论必须与项目实际技术栈和既有风格一致。未加载项目规范前，禁止对样式类问题下结论。
@@ -108,6 +108,8 @@ permissionMode: default
 - **命名规范** — 类名 PascalCase、方法/变量 camelCase、常量 UPPER_SNAKE；枚举、布尔值语义清晰；不缩写、不拼音、不中英混杂
 - **格式规范** — 缩进、换行、大括号风格与项目一致；方法过长（>50 行）提示拆分
 - **注释规范** — 类/方法 JavaDoc（中文）、关键逻辑有注释；**新增/改动方法的注释遵守下方「文档注释完整性」与「注释精简口径」**；无废话注释；`TODO` / `FIXME` 标注明确
+- **方法注释结构规范** — 方法 JavaDoc 先一句话职责，再以**编号逻辑步骤（1. 2. 3. …）**描述主流程、分支归属与边界；禁止把判定规则、边界、TODO/设计代号等揉成一大段 `<p>` 叙述；方法体关键节点用简短内联注释，不写长句小作文
+- **注释精简化（必查项，违者报 WARNING 要求清理）** — 注释只写代码**不自明**的意图/边界/取舍；**违禁形态（逐一扫描，命中即报告）**：① 类级「平行于某场景 / 差异在… / 业务表 xxx（键列=…）、附件 obj_type 等」流水账式说明；② 在代码注释里写**设计代号 / 文档内部引用**（如 `D1~D7`、`TODO-T1~Tn`、`见 design-xxx §x`）；③ 逐行复述代码本身的废话注释（`// 把 X 赋给 Y` 之类）；`TODO`/`FIXME` 仅允许真实待办且写明内容
 - **简洁性规范** — **新增/改造方法与 SQL 遵守下方「代码简洁性」口径**：入参最少且内聚、优先复用既有查询/对象、SQL 谓词不冗余、较独立的分支/计算抽私有方法
 - **方法内聚规范** — **新增/改造方法遵守下方「按逻辑节点抽取私有方法（MUST）」**：方法内出现多个可命名的独立子任务/逻辑节点即应抽取，**主动检查、不得等用户/审查人指出**
 - **分层规范** — Controller / Service / Mapper 职责边界清晰；DTO / VO / Entity 使用位置正确

@@ -31,6 +31,7 @@ skills/add-javadoc/SKILL.md              # Skill: JavaDoc 文档注释补充
 skills/gen-java-entity/SKILL.md          # Skill: Java Entity + Mapper 生成
 skills/write-a-skill/SKILL.md            # Skill: 编写 Agent Skill
 skills/build-fix/SKILL.md                # Skill: Java 构建错误修复
+skills/kb-loader/SKILL.md               # Skill: 知识库规范解析器（编码/审查/生成前加载）
 skills/tdd/SKILL.md                      # Skill: Java TDD 工作流
 ```
 
@@ -163,6 +164,12 @@ Java 代码审查。对 git diff 变更进行 7 维审查（分层架构、JPA/D
 
 详细流程见 `skills/fix/SKILL.md`。
 
+### Skill: kb-loader
+
+知识库规范解析器。编码/审查/生成代码前，按「项目标识 + 任务类型」从工程知识库解析应加载的规范文档清单（KB 根取用户级 CLAUDE.md 声明的知识库根，项目标识经 `projects/index.md` 注册表按工作目录自动匹配）。规范正文唯一事实源在工程知识库，本 Skill 只做定位与解析，不复制规则正文。
+
+详细流程见 `skills/kb-loader/SKILL.md`。
+
 ### Skill: add-javadoc
 
 为 Service 接口和实现类补充 JavaDoc 文档注释。自动扫描未注释方法，生成符合项目风格的中文 JavaDoc（`@param`、`@return`、`@throws`）。
@@ -209,7 +216,7 @@ Agent（独立子进程）
   └── superpowers-planner：设计规划（头脑风暴→Spec→Plan）
 ```
 
-- **Skill（10 个）**：内联执行，自动触发，覆盖代码生成、质量保障、流程编排
+- **Skill（11 个）**：内联执行，自动触发，覆盖代码生成、质量保障、流程编排、规范加载
 - **Agent（6 个）**：独立子进程，根据用户输入自动匹配委托，探查项目上下文后执行复杂多步骤任务
 
 ## Agent 自动路由
