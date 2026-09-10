@@ -1,6 +1,6 @@
 {
   "name": "my-ext",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "description": "Java 开发工作流与共享技能，支持设计规划、数据库操作、实现、审查和缺陷修复。",
   "author": {
     "name": "yuanziquan"
