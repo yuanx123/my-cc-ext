@@ -10,7 +10,18 @@ Java 开发全流程 Agent 和 Skill 工具集，支持 Claude Code、OpenCode �
 | OpenCode >=1.15.10 | [OpenCode 安装说明](docs/README.opencode.md) |
 | Codex | [Codex 安装说明](docs/README.codex.md) |
 
-## Codex 本地安装
+## Codex 安装
+
+默认分支包含市场入口且首次发布完成后：
+
+```powershell
+codex plugin marketplace add huhuhu-999/my-cc-ext
+codex plugin add my-ext@my-cc-ext
+```
+
+Git 市场自动读取 `codex-dist` 分支中的完整插件，不需要用户手动打包。
+
+### 本地开发验证
 
 在包含 Codex 适配的仓库根目录执行：
 

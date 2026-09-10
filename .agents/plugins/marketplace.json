@@ -1,0 +1,22 @@
+{
+  "name": "my-cc-ext",
+  "interface": {
+    "displayName": "Java Development Toolchain"
+  },
+  "plugins": [
+    {
+      "name": "my-ext",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/huhuhu-999/my-cc-ext.git",
+        "ref": "codex-dist",
+        "path": "./plugins/my-ext"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

@@ -15,7 +15,9 @@
 
 ## 安装与发布
 
-原生市场模板保存在 `codex/marketplace.json`；保留 `.claude-plugin/marketplace.json`。Codex 统一安装组装后的包，模板在打包时写入产物的 `.agents/plugins/marketplace.json`。源码不提供直接 Git 安装入口，防止漏装专属工作流。文档提供组装、分发、安装和升级步骤，不自动修改用户市场配置或发布分支。
+本地市场模板保存在 `codex/marketplace.json`；保留 `.claude-plugin/marketplace.json`。新增源码 `.agents/plugins/marketplace.json`，使用 `git-subdir` 指向同仓库 `codex-dist` 分支的 `plugins/my-ext`。用户直接添加源码 Git 市场，实际安装的是完整组装包，不把源码根目录作为插件安装。
+
+`.github/workflows/codex-release.yml` 在正式 Release 发布或默认分支手动触发时执行。构建任务验证 Codex、共享内容、版本与 JavaDoc，然后组装并上传包含隐藏文件的产物。发布任务依赖构建成功，通过普通 Git 提交更新 `codex-dist`，不强制推送。保留 `SOURCE_COMMIT` 追溯源码，产物分支不参与手工维护。首次使用需先合并源码市场入口，再执行首次发布。
 
 实施对照验证发现：本机 Codex 能添加市场，但本地插件与市场同处根目录时可用列表为空；使用子目录插件可成功安装，是否存在 Claude 清单不影响此结果。新增 `scripts/codex/stage-marketplace.mjs`，按 npm 发布清单在用户指定的新目录生成本地市场及 `plugins/my-ext/` 安装产物，保留源码结构。拒绝覆盖已有目录或向源码目录内输出，不重复维护 Skill 正文。
 
