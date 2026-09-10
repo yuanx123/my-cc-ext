@@ -1,10 +1,13 @@
 {
   "name": "my-ext",
   "version": "1.0.28",
-  "description": "Java development agents and shared skills for Claude Code and OpenCode",
+  "description": "Java development agents and shared skills for Claude Code, OpenCode and Codex",
   "type": "module",
   "main": ".opencode/plugins/my-ext.js",
   "files": [
+    ".codex-plugin/plugin.json",
+    "codex/agent-adapter.md",
+    "agents/*/AGENT.md",
     ".opencode/plugins/my-ext.js",
     ".opencode/bootstrap.md",
     ".opencode/agents/",
@@ -12,13 +15,15 @@
     "skills/*/SKILL.md",
     "skills/add-javadoc/scripts/scan_javadoc.py",
     "skills/add-javadoc/templates/",
+    "skills/design-doc-writer/templates/",
     "skills/gen-java-enum/EXAMPLES.md",
     "skills/gen-pgsql-ddl/EXAMPLES.md",
     "skills/gen-pgsql-ddl/REFERENCE.md",
     "skills/gen-pgsql-ddl/template/",
     "AGENTS.md",
     "readme.md",
-    "docs/README.opencode.md"
+    "docs/README.opencode.md",
+    "docs/README.codex.md"
   ],
   "engines": {
     "node": ">=20.11",
@@ -31,8 +36,10 @@
     "version:check": "node scripts/opencode/sync-version.mjs --check",
     "version:sync": "node scripts/opencode/sync-version.mjs --write",
     "test:opencode": "node --test tests/opencode/*.test.mjs",
+    "test:codex": "node --test tests/codex/*.test.mjs",
+    "stage:codex": "node scripts/codex/stage-marketplace.mjs",
     "test:python": "python -m unittest discover -s skills/add-javadoc/tests -p test_*.py -v",
-    "test": "npm run lint:portability && npm run check:agents && npm run version:check && npm run test:opencode && npm run test:python",
+    "test": "npm run lint:portability && npm run check:agents && npm run version:check && npm run test:codex && npm run test:opencode && npm run test:python",
     "smoke:opencode": "node scripts/opencode/smoke-test.mjs"
   },
   "license": "MIT"

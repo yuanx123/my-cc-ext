@@ -30,6 +30,7 @@ test("root skills remain the single shared source", async () => {
     "gen-java-enum",
     "gen-pgsql-ddl",
     "implement-from-design",
+    "kb-loader",
     "tdd",
     "write-a-skill",
   ]);

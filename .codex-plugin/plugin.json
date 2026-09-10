@@ -1,0 +1,25 @@
+{
+  "name": "my-ext",
+  "version": "1.0.28",
+  "description": "Java 开发工作流与共享技能，支持设计规划、数据库操作、实现、审查和缺陷修复。",
+  "author": {
+    "name": "yuanziquan"
+  },
+  "repository": "https://github.com/huhuhu-999/my-cc-ext",
+  "license": "MIT",
+  "keywords": ["java", "database", "sql", "mybatis", "code-review", "tdd", "skill", "agent"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Java Development Toolchain",
+    "shortDescription": "Java 后端开发 Agent 工作流与 Skill 工具集",
+    "longDescription": "复用共享 Skill 与 Agent 源文件，提供需求规划、数据库操作、实现、审查、修复和扩展开发工作流。",
+    "developerName": "yuanziquan",
+    "category": "Developer Tools",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/huhuhu-999/my-cc-ext",
+    "defaultPrompt": [
+      "使用 feature-dev-agent 根据需求文档推进 Java 功能开发。",
+      "使用 code-review-agent 审查当前改动，只报告问题。"
+    ]
+  }
+}

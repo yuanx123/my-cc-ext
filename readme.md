@@ -1,6 +1,6 @@
 # my-ext
 
-Java 开发全流程 Agent 和 Skill 工具集，支持 Claude Code 与 OpenCode。根 `skills/` 是两端共享的唯一 Skill 内容源。
+Java 开发全流程 Agent 和 Skill 工具集，支持 Claude Code、OpenCode 与 Codex。根 `skills/` 是各平台共享的唯一 Skill 内容源。
 
 ## 平台选择
 
@@ -8,6 +8,19 @@ Java 开发全流程 Agent 和 Skill 工具集，支持 Claude Code 与 OpenCode
 |---|---|
 | Claude Code | 保留下方 Marketplace 和本地插件安装流程 |
 | OpenCode >=1.15.10 | [OpenCode 安装说明](docs/README.opencode.md) |
+| Codex | [Codex 安装说明](docs/README.codex.md) |
+
+## Codex 本地安装
+
+在包含 Codex 适配的仓库根目录执行：
+
+```powershell
+npm run stage:codex -- "$env:USERPROFILE/my-ext-codex-local"
+codex plugin marketplace add "$env:USERPROFILE/my-ext-codex-local"
+codex plugin add my-ext@my-cc-ext-local
+```
+
+打包目录须为新的仓库外目录，不会移动源码。共享技能保留在 `skills/`，Codex 专属入口位于 `codex/skills/`，仅打包时合并。安装后开启新任务，通过 `$feature-dev-agent`、`$db-ops-agent`、`$code-review-agent` 等工作流 Skill 调用原有 Agent。安装包分发、知识库配置、升级和限制见 [Codex 安装说明](docs/README.codex.md)。
 
 ## OpenCode 用户级安装
 
@@ -109,8 +122,14 @@ claude plugins enable my-ext
 
 ```text
 .claude-plugin/plugin.json
+.codex-plugin/plugin.json
+.opencode/
+codex/agent-adapter.md
+codex/marketplace.json
+codex/skills/
 agents/
 skills/
+AGENTS.md
 CLAUDE.md
 ```
 

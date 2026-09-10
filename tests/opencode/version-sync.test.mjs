@@ -20,7 +20,7 @@ async function createFixture(t) {
   t.after(cleanup);
 
   try {
-    for (const item of ["package.json", "readme.md", ".claude-plugin", ".opencode", "docs", "scripts"]) {
+    for (const item of ["package.json", "readme.md", ".claude-plugin", ".codex-plugin", ".opencode", "docs", "scripts"]) {
       await cp(path.join(root, item), path.join(fixture, item), { recursive: true });
     }
     return fixture;
