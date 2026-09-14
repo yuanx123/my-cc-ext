@@ -48,7 +48,7 @@ function createValidConfig() {
           "git show*": "allow",
           "git rev-parse*": "allow",
         },
-        external_directory: "deny",
+        external_directory: "ask",
         task: Object.fromEntries([["*", "deny"], ...(taskAllow[name] ?? []).map((task) => [task, "allow"])]),
       },
     }])),

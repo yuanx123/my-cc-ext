@@ -12,7 +12,7 @@ export const PERMISSION_BASELINE = {
     "git show*": "allow",
     "git rev-parse*": "allow",
   },
-  external_directory: "deny",
+  external_directory: "ask",
 };
 
 export const READ_ONLY_PERMISSION = {

@@ -36,7 +36,7 @@ test("declarative mappings and permission baseline are closed", () => {
   assert.deepEqual(PERMISSION_BASELINE, {
     read: "allow", glob: "allow", grep: "allow", skill: "allow", edit: "ask",
     bash: { "*": "ask", "git status*": "allow", "git diff*": "allow", "git log*": "allow", "git show*": "allow", "git rev-parse*": "allow" },
-    external_directory: "deny",
+    external_directory: "ask",
   });
 });
 
@@ -79,7 +79,7 @@ test("generated review resolves shared skills and platform-neutral knowledge-bas
   assert.equal(permission.edit, "deny");
   assert.equal(permission.bash["*"], "deny");
   assert.equal(permission.bash["git diff --no-ext-diff --no-textconv"], "allow");
-  assert.equal(permission.external_directory, "deny");
+  assert.equal(permission.external_directory, "ask");
   assert.deepEqual(permission.task, { "*": "deny" });
 });
 

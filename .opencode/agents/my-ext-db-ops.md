@@ -2,7 +2,7 @@
 name: my-ext-db-ops
 description: "当用户需要操作数据库（DDL建表/DML查询/Entity生成/Mapper/SQL审查/索引设计）时，先输出匹配提示再自动委托此 Agent。触发词：建表、DDL、SQL、Entity、Mapper、数据库。"
 mode: subagent
-permission: {"read":"allow","glob":"allow","grep":"allow","skill":"allow","edit":"ask","bash":{"*":"ask","git status*":"allow","git diff*":"allow","git log*":"allow","git show*":"allow","git rev-parse*":"allow"},"external_directory":"deny","task":{"*":"deny"}}
+permission: {"read":"allow","glob":"allow","grep":"allow","skill":"allow","edit":"ask","bash":{"*":"ask","git status*":"allow","git diff*":"allow","git log*":"allow","git show*":"allow","git rev-parse*":"allow"},"external_directory":"ask","task":{"*":"deny"}}
 ---
 <!-- generated-from: agents/db-ops/AGENT.md -->
 <!-- source-sha256: 4f09b8303516f4c01f541022f3ac247023ba76bde72957a5f5eb78b7f8fccc70 -->

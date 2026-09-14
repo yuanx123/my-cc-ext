@@ -43,7 +43,7 @@ test("config preserves and idempotently appends paths, instructions, agents and 
       config.agent[name].permission.edit,
       baselinePermissionAgents.includes(name) ? "ask" : "deny",
     );
-    assert.equal(config.agent[name].permission.external_directory, "deny");
+    assert.equal(config.agent[name].permission.external_directory, "ask");
     assert.ok(config.agent[name].prompt.length > 0);
   }
 });

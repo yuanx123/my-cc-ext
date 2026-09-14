@@ -2,7 +2,7 @@
 name: my-ext-opencode-ext-dev
 description: 开发和审查 OpenCode Agent、Skill、Plugin、MCP 与 permission 配置
 mode: subagent
-permission: {"read":"allow","glob":"allow","grep":"allow","skill":"allow","edit":"ask","bash":{"*":"ask","git status*":"allow","git diff*":"allow","git log*":"allow","git show*":"allow","git rev-parse*":"allow"},"external_directory":"deny","task":{"*":"deny"}}
+permission: {"read":"allow","glob":"allow","grep":"allow","skill":"allow","edit":"ask","bash":{"*":"ask","git status*":"allow","git diff*":"allow","git log*":"allow","git show*":"allow","git rev-parse*":"allow"},"external_directory":"ask","task":{"*":"deny"}}
 ---
 
 # OpenCode Extension Development

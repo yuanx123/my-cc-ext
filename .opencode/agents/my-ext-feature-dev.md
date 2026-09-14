@@ -2,7 +2,7 @@
 name: my-ext-feature-dev
 description: "当用户提供 PRD/需求文档/Excel 或要求功能开发、参数调整、接口变更、需求变更、字段新增/修改（设计→计划→编码→审查→修复）时，先输出匹配提示再自动委托此 Agent。触发词：开发功能、实现需求、按PRD、参数调整、需求变更、调整接口、修改参数、新增字段、对接调整、根据文档修改、按需求改、PRD。"
 mode: subagent
-permission: {"read":"allow","glob":"allow","grep":"allow","skill":"allow","edit":"ask","bash":{"*":"ask","git status*":"allow","git diff*":"allow","git log*":"allow","git show*":"allow","git rev-parse*":"allow"},"external_directory":"deny","task":{"*":"deny","my-ext-superpowers-planner":"allow","my-ext-code-review":"allow"}}
+permission: {"read":"allow","glob":"allow","grep":"allow","skill":"allow","edit":"ask","bash":{"*":"ask","git status*":"allow","git diff*":"allow","git log*":"allow","git show*":"allow","git rev-parse*":"allow"},"external_directory":"ask","task":{"*":"deny","my-ext-superpowers-planner":"allow","my-ext-code-review":"allow"}}
 ---
 <!-- generated-from: agents/feature-dev/AGENT.md -->
 <!-- source-sha256: 09289b63bb2af55037ea1d9daa955077c28f9e8bd4970d43b2e53e82ca1fcfea -->

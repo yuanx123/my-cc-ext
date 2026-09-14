@@ -2,7 +2,7 @@
 name: my-ext-code-review
 description: "当用户需要对代码进行全维度深度审查（代码风格/命名规范、循环内数据库操作、N+1、事务边界、并发安全、资源未释放、空指针、死循环、索引失效等重大逻辑缺陷，以及分层架构、ORM/数据库、异常处理、安全性、代码质量、测试、日志 7 维全面检查）时，先输出匹配提示再自动委托此 Agent。触发词：代码审查、审查代码、深度审查、样式检查、逻辑审查、N+1、循环查库、性能审查、review 整个模块。"
 mode: subagent
-permission: {"read":"allow","glob":"allow","grep":"allow","skill":"allow","edit":"deny","bash":{"*":"deny","git status --short":"allow","git diff --no-ext-diff --no-textconv":"allow","git diff --cached --no-ext-diff --no-textconv":"allow","git log -5 --oneline":"allow"},"external_directory":"deny","task":{"*":"deny"}}
+permission: {"read":"allow","glob":"allow","grep":"allow","skill":"allow","edit":"deny","bash":{"*":"deny","git status --short":"allow","git diff --no-ext-diff --no-textconv":"allow","git diff --cached --no-ext-diff --no-textconv":"allow","git log -5 --oneline":"allow"},"external_directory":"ask","task":{"*":"deny"}}
 ---
 <!-- generated-from: agents/code-review/AGENT.md -->
 <!-- source-sha256: 22ad5d6d2950d9e591834316ae90fe278ab33e992ef353103916c5d9f9fdc834 -->

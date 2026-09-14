@@ -136,7 +136,7 @@ export function assertConfigContract(config) {
       || permission.grep !== "allow"
       || permission.skill !== "allow"
       || permission.edit !== (readOnly ? "deny" : "ask")
-      || permission.external_directory !== "deny") {
+      || permission.external_directory !== "ask") {
       throw new Error(`resolved agent ${name} does not match the permission baseline`);
     }
     if (!matchesExactStringMap(permission.bash, readOnly ? REVIEW_BASH_PERMISSION : BASH_PERMISSION_BASELINE)) {
