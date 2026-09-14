@@ -1,0 +1,5 @@
+# 统一行尾为 LF。
+# 本仓库是「Markdown 产物 + 字节级校验」形态（测试直接比对生成文件内容），
+# 且 CI 含 windows-latest 矩阵，必须消除 core.autocrlf=true 带来的 CRLF 差异。
+# 见 docs/superpowers 计划中的 Windows 矩阵说明。
+* text=auto eol=lf

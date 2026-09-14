@@ -38,13 +38,8 @@ jobs:
           if [ -n "$RELEASE_TAG" ]; then
             test "$RELEASE_TAG" = "v$(node -p 'JSON.parse(require("fs").readFileSync("package.json", "utf8")).version')"
           fi
-      - name: Validate Codex and shared content
-        run: |
-          npm run lint:portability
-          npm run version:check
-          npm run test:codex
-          node --test tests/opencode/shared-content.test.mjs tests/opencode/package-content.test.mjs
-          npm run test:python
+      - name: Validate all platform contracts
+        run: npm test
       - name: Assemble distribution
         run: |
           npm run stage:codex -- "$RUNNER_TEMP/codex-distribution"
@@ -56,8 +51,14 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
-  publish:
+  opencode-contract:
     needs: build
+    uses: ./.github/workflows/opencode-contract.yml
+    with:
+      git_spec: my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#${{ github.sha }}
+
+  publish:
+    needs: [build, opencode-contract]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

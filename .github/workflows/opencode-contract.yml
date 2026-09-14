@@ -1,6 +1,11 @@
 name: OpenCode Contract
 
 on:
+  workflow_call:
+    inputs:
+      git_spec:
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       git_spec:
@@ -26,6 +31,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.11
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
       - name: Install OpenCode
         run: npm install --global opencode-ai@${{ matrix.opencode }}
       - name: Run repository tests
