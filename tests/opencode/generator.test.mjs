@@ -7,9 +7,11 @@ import { AGENT_MAPPINGS, PERMISSION_BASELINE, generateAgent, generateAll } from 
 
 const root = path.resolve(import.meta.dirname, "../..");
 
-test("four generated agents exactly match their Claude sources", async () => {
+test("generated agents exactly match their Claude sources", async () => {
   const generated = await generateAll(root);
-  assert.equal(generated.length, 4);
+  assert.deepEqual(generated.map((item) => item.mapping.name).sort(), [
+    "my-ext-code-review", "my-ext-db-ops", "my-ext-feature-dev", "my-ext-fix", "my-ext-superpowers-planner",
+  ]);
   for (const item of generated) {
     assert.equal(await readFile(path.join(root, item.mapping.output), "utf8"), item.content);
   }
@@ -29,6 +31,7 @@ test("declarative mappings and permission baseline are closed", () => {
     "my-ext-feature-dev",
     "my-ext-fix",
     "my-ext-superpowers-planner",
+    "my-ext-code-review",
   ]);
   assert.deepEqual(PERMISSION_BASELINE, {
     read: "allow", glob: "allow", grep: "allow", skill: "allow", edit: "ask",
@@ -66,6 +69,18 @@ test("generated bodies contain no trailing whitespace", async () => {
   for (const item of await generateAll(root)) {
     assert.doesNotMatch(item.content, /[ \t]+$/m, item.mapping.output);
   }
+});
+
+test("generated review resolves shared skills and platform-neutral knowledge-base instructions", async () => {
+  const review = (await generateAll(root)).find((item) => item.mapping.name === "my-ext-code-review").content;
+  assert.doesNotMatch(review, /~\/\.claude|`my-ext-fix` skill|my-ext:kb-loader/);
+  assert.match(review, /`fix` skill/);
+  const permission = JSON.parse(review.match(/^permission: (.+)$/m)[1]);
+  assert.equal(permission.edit, "deny");
+  assert.equal(permission.bash["*"], "deny");
+  assert.equal(permission.bash["git diff --no-ext-diff --no-textconv"], "allow");
+  assert.equal(permission.external_directory, "deny");
+  assert.deepEqual(permission.task, { "*": "deny" });
 });
 
 test("description is a JSON-quoted YAML scalar and rejects multiline syntax", () => {

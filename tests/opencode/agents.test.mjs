@@ -40,8 +40,9 @@ test("package has exactly six OpenCode subagents with permission baseline", asyn
     assert.equal(permission.read, "allow");
     assert.equal(permission.glob, "allow");
     assert.equal(permission.grep, "allow");
-    assert.equal(permission.skill, undefined);
+    assert.equal(permission.skill, "allow");
     assert.equal(permission.edit, "deny");
+    assert.equal(permission.bash["*"], "deny");
     assert.equal(permission.external_directory, "deny");
     assert.equal(permission.task["*"], "deny");
     assert.ok(Object.keys(permission.task).filter((name) => name !== "*").every((name) => /^my-ext-/.test(name)));

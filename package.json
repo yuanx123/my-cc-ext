@@ -22,6 +22,7 @@
     "skills/gen-pgsql-ddl/template/",
     "AGENTS.md",
     "readme.md",
+    "docs/README.claude.md",
     "docs/README.opencode.md",
     "docs/README.codex.md"
   ],
@@ -35,8 +36,8 @@
     "lint:portability": "node scripts/opencode/portability-lint.mjs",
     "version:check": "node scripts/opencode/sync-version.mjs --check",
     "version:sync": "node scripts/opencode/sync-version.mjs --write",
-    "test:opencode": "node --test tests/opencode/*.test.mjs",
-    "test:codex": "node --test tests/codex/*.test.mjs",
+    "test:opencode": "node scripts/run-tests.mjs opencode",
+    "test:codex": "node scripts/run-tests.mjs codex",
     "stage:codex": "node scripts/codex/stage-marketplace.mjs",
     "test:python": "python -m unittest discover -s skills/add-javadoc/tests -p test_*.py -v",
     "test": "npm run lint:portability && npm run check:agents && npm run version:check && npm run test:codex && npm run test:opencode && npm run test:python",

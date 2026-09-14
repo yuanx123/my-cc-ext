@@ -6,6 +6,7 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 
 const root = path.resolve(import.meta.dirname, "../..");
+const { version } = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
 
 function run(cwd, mode) {
   return spawnSync(process.execPath, ["scripts/opencode/sync-version.mjs", mode], {
@@ -31,7 +32,10 @@ async function createFixture(t) {
 }
 
 async function replace(file, pattern, replacement) {
-  await writeFile(file, (await readFile(file, "utf8")).replace(pattern, replacement), "utf8");
+  const before = await readFile(file, "utf8");
+  const after = before.replace(pattern, replacement);
+  assert.notEqual(after, before, `fixture mutation did not match ${file}`);
+  await writeFile(file, after, "utf8");
 }
 
 async function setPackageVersion(fixture, version) {
@@ -46,30 +50,32 @@ async function setPackageVersion(fixture, version) {
 test("package version drives both manifests and pinned docs", () => {
   const result = run(root, "--check");
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /version 1\.0\.14 is synchronized/);
+  assert.ok(result.stdout.includes(`version ${version} is synchronized`));
 });
 
 test("check mode reports manifest and documentation drift with file context", async (t) => {
   const fixture = await createFixture(t);
-  await replace(path.join(fixture, ".claude-plugin", "plugin.json"), '"version": "1.0.14"', '"version": "9.9.9"');
-  await replace(path.join(fixture, "docs", "README.opencode.md"), /#v1\.0\.14/g, "#v9.9.9");
+  await replace(path.join(fixture, ".claude-plugin", "plugin.json"), `"version": "${version}"`, '"version": "9.9.9"');
+  await replace(path.join(fixture, "docs", "README.opencode.md"), /#v\d+\.\d+\.\d+/g, "#v9.9.9");
 
   const result = run(fixture, "--check");
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /\.claude-plugin\/plugin\.json has 9\.9\.9, expected 1\.0\.14/);
-  assert.match(result.stderr, /docs\/README\.opencode\.md is missing #v1\.0\.14/);
+  assert.ok(result.stderr.includes(`.claude-plugin/plugin.json has 9.9.9, expected ${version}`));
+  assert.ok(result.stderr.includes(`docs/README.opencode.md is missing #v${version}`));
 });
 
 test("write mode synchronizes every target without changing package version", async (t) => {
   const fixture = await createFixture(t);
   const { packageFile, source: packageSource } = await setPackageVersion(fixture, "1.0.11");
+  const readmeBefore = await readFile(path.join(fixture, "readme.md"));
 
   const result = run(fixture, "--write");
   assert.equal(result.status, 0, result.stderr);
   assert.equal(await readFile(packageFile, "utf8"), packageSource);
   assert.equal(JSON.parse(await readFile(path.join(fixture, ".claude-plugin", "plugin.json"), "utf8")).version, "1.0.11");
   assert.equal(JSON.parse(await readFile(path.join(fixture, ".claude-plugin", "marketplace.json"), "utf8")).plugins[0].version, "1.0.11");
-  for (const file of [".opencode/INSTALL.md", "docs/README.opencode.md", "readme.md"]) {
+  assert.deepEqual(await readFile(path.join(fixture, "readme.md")), readmeBefore);
+  for (const file of [".opencode/INSTALL.md", "docs/README.opencode.md"]) {
     const source = await readFile(path.join(fixture, file), "utf8");
     assert.match(source, /#v1\.0\.11/);
     assert.doesNotMatch(source, /#v1\.0\.10/);
@@ -97,12 +103,12 @@ test("write mode is byte-for-byte unchanged when every target is synchronized", 
   const fixture = await createFixture(t);
   await writeFile(
     path.join(fixture, ".claude-plugin", "plugin.json"),
-    '{"name":"my-ext","version":"1.0.14","keywords":["java","tdd"]}\r\n',
+    `{"name":"my-ext","version":"${version}","keywords":["java","tdd"]}\r\n`,
     "utf8",
   );
   await writeFile(
     path.join(fixture, ".claude-plugin", "marketplace.json"),
-    '{\r\n  "plugins":[{"name":"my-ext","version" : "1.0.14","keywords":["java","tdd"]}]\r\n}\r\n',
+    `{\r\n  "plugins":[{"name":"my-ext","version" : "${version}","keywords":["java","tdd"]}]\r\n}\r\n`,
     "utf8",
   );
   const files = [

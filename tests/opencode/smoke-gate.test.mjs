@@ -10,6 +10,7 @@ const root = path.resolve(import.meta.dirname, "../..");
 const script = path.join(root, "scripts", "opencode", "smoke-test.mjs");
 const immutableSpec = "my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.1.0";
 const agentNames = [
+  "my-ext-code-review",
   "my-ext-db-ops",
   "my-ext-feature-dev",
   "my-ext-fix",
@@ -19,8 +20,8 @@ const agentNames = [
 
 function createValidConfig() {
   const taskAllow = {
-    "my-ext-feature-dev": "my-ext-superpowers-planner",
-    "my-ext-superpowers-planner": "my-ext-feature-dev",
+    "my-ext-feature-dev": ["my-ext-superpowers-planner", "my-ext-code-review"],
+    "my-ext-superpowers-planner": ["my-ext-feature-dev"],
   };
   return {
     skills: { paths: ["/installed/my-ext/skills"] },
@@ -32,8 +33,14 @@ function createValidConfig() {
         glob: "allow",
         grep: "allow",
         skill: "allow",
-        edit: "ask",
-        bash: {
+        edit: name === "my-ext-code-review" ? "deny" : "ask",
+        bash: name === "my-ext-code-review" ? {
+          "*": "deny",
+          "git status --short": "allow",
+          "git diff --no-ext-diff --no-textconv": "allow",
+          "git diff --cached --no-ext-diff --no-textconv": "allow",
+          "git log -5 --oneline": "allow",
+        } : {
           "*": "ask",
           "git status*": "allow",
           "git diff*": "allow",
@@ -42,7 +49,7 @@ function createValidConfig() {
           "git rev-parse*": "allow",
         },
         external_directory: "deny",
-        task: taskAllow[name] ? { "*": "deny", [taskAllow[name]]: "allow" } : { "*": "deny" },
+        task: Object.fromEntries([["*", "deny"], ...(taskAllow[name] ?? []).map((task) => [task, "allow"])]),
       },
     }])),
   };
@@ -72,6 +79,25 @@ test("real smoke skips with exit zero only when the explicit gate is disabled", 
     assert.equal(result.status, 0, result.stderr);
     assert.match(result.stdout, /^SKIP: set MY_EXT_RUN_OPENCODE_SMOKE=1/);
   }
+});
+
+test("smoke rejects a missing reviewer or reviewer write and shell grants", () => {
+  for (const mutate of [
+    (config) => { delete config.agent["my-ext-code-review"]; },
+    (config) => { config.agent["my-ext-code-review"].permission.edit = "ask"; },
+    (config) => { config.agent["my-ext-code-review"].permission.bash["*"] = "ask"; },
+  ]) {
+    const config = createValidConfig();
+    mutate(config);
+    assert.throws(() => assertConfigContract(config), /my-ext-code-review/);
+  }
+});
+
+test("actual plugin registration satisfies the installation contract", async () => {
+  const { createHooks } = await import("../../.opencode/plugins/my-ext.js");
+  const config = {};
+  await createHooks({ localEntry: false }).config(config);
+  assert.doesNotThrow(() => assertConfigContract(config));
 });
 
 test("enabled smoke rejects mutable and lookalike Git specs before invoking OpenCode", () => {

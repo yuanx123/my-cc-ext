@@ -4,10 +4,11 @@ import path from "node:path";
 import test from "node:test";
 
 const root = path.resolve(import.meta.dirname, "../..");
+const { version } = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
 
 test("OpenCode 中文文档使用固定 Git 引用并说明 npm 兜底风险", async () => {
   const source = await readFile(path.join(root, "docs", "README.opencode.md"), "utf8");
-  assert.match(source, /my-cc-ext\.git#v1\.0\.14/);
+  assert.ok(source.includes(`my-cc-ext.git#v${version}`));
   assert.match(source, /完整的? 40 位 commit/);
   assert.match(source, /Bun/);
   assert.match(source, /npm 兜底/);
@@ -37,10 +38,14 @@ test("完整 OpenCode 中文文档覆盖 Windows、升级和卸载", async () =>
   assert.match(source, /^## 卸载$/m);
 });
 
-test("main README links both platforms and preserves Claude commands and names", async () => {
+test("main README links platform guides and Claude guide preserves commands", async () => {
   const source = await readFile(path.join(root, "readme.md"), "utf8");
   assert.match(source, /Claude Code.*OpenCode/s);
   assert.match(source, /docs\/README\.opencode\.md/);
+  assert.match(source, /docs\/README\.claude\.md/);
+  assert.match(source, /docs\/README\.codex\.md/);
+  assert.doesNotMatch(source, /codex plugin|opencode debug config|my-cc-ext\.git#v/);
+  const claudeGuide = await readFile(path.join(root, "docs", "README.claude.md"), "utf8");
   for (const command of [
     "/plugin marketplace add https://github.com/huhuhu-999/my-cc-ext.git",
     "/plugin install my-ext@my-cc-ext",
@@ -48,19 +53,18 @@ test("main README links both platforms and preserves Claude commands and names",
     "/plugin uninstall my-ext@my-cc-ext",
     "claude plugins install .",
   ]) {
-    assert.ok(source.includes(command), `README.md is missing ${command}`);
+    assert.ok(claudeGuide.includes(command), `README.claude.md is missing ${command}`);
   }
   for (const name of ["db-ops", "cc-ext-dev", "feature-dev", "superpowers-planner", "code-review"]) {
     assert.ok(source.includes(`| \`${name}\` |`), `README.md is missing ${name}`);
   }
 });
 
-test("main README documents OpenCode user-level installation", async () => {
-  const source = await readFile(path.join(root, "readme.md"), "utf8");
-  assert.match(source, /^## OpenCode 用户级安装$/m);
+test("OpenCode guide documents user-level installation", async () => {
+  const source = await readFile(path.join(root, "docs", "README.opencode.md"), "utf8");
   assert.match(source, /%USERPROFILE%\\\.config\\opencode\\opencode\.json/);
   assert.match(source, /~\/\.config\/opencode\/opencode\.json/);
-  assert.match(source, /my-cc-ext\.git#v1\.0\.14/);
+  assert.ok(source.includes(`my-cc-ext.git#v${version}`));
   assert.match(source, /固定发布标签或完整 40 位 commit/);
   assert.match(source, /opencode debug config/);
   assert.match(source, /my-ext-feature-dev/);

@@ -5,6 +5,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 const AGENT_NAMES = [
+  "my-ext-code-review",
   "my-ext-db-ops",
   "my-ext-feature-dev",
   "my-ext-fix",
@@ -20,8 +21,15 @@ const BASH_PERMISSION_BASELINE = {
   "git rev-parse*": "allow",
 };
 const TASK_ALLOW = {
-  "my-ext-feature-dev": "my-ext-superpowers-planner",
-  "my-ext-superpowers-planner": "my-ext-feature-dev",
+  "my-ext-feature-dev": ["my-ext-superpowers-planner", "my-ext-code-review"],
+  "my-ext-superpowers-planner": ["my-ext-feature-dev"],
+};
+const REVIEW_BASH_PERMISSION = {
+  "*": "deny",
+  "git status --short": "allow",
+  "git diff --no-ext-diff --no-textconv": "allow",
+  "git diff --cached --no-ext-diff --no-textconv": "allow",
+  "git log -5 --oneline": "allow",
 };
 
 const GIT_SPEC_PATTERN = /^my-ext@(?:git\+)?https:\/\/github\.com\/huhuhu-999\/my-cc-ext\.git#(?:v\d+\.\d+\.\d+|[0-9a-fA-F]{40})$|^my-ext@(?:git\+ssh:\/\/git@github\.com\/huhuhu-999\/my-cc-ext\.git|git@github\.com:huhuhu-999\/my-cc-ext\.git)#(?:v\d+\.\d+\.\d+|[0-9a-fA-F]{40})$/;
@@ -122,19 +130,19 @@ export function assertConfigContract(config) {
       throw new Error(`resolved agent ${name} must inherit its model`);
     }
     const permission = agent.permission;
+    const readOnly = name === "my-ext-code-review";
     if (permission?.read !== "allow"
       || permission.glob !== "allow"
       || permission.grep !== "allow"
       || permission.skill !== "allow"
-      || permission.edit !== "ask"
+      || permission.edit !== (readOnly ? "deny" : "ask")
       || permission.external_directory !== "deny") {
       throw new Error(`resolved agent ${name} does not match the permission baseline`);
     }
-    if (!matchesExactStringMap(permission.bash, BASH_PERMISSION_BASELINE)) {
+    if (!matchesExactStringMap(permission.bash, readOnly ? REVIEW_BASH_PERMISSION : BASH_PERMISSION_BASELINE)) {
       throw new Error(`resolved agent ${name} does not match the bash permission baseline`);
     }
-    const allowedTask = TASK_ALLOW[name];
-    const taskBaseline = allowedTask ? { "*": "deny", [allowedTask]: "allow" } : { "*": "deny" };
+    const taskBaseline = Object.fromEntries([["*", "deny"], ...(TASK_ALLOW[name] ?? []).map((task) => [task, "allow"])]);
     if (!matchesExactStringMap(permission.task, taskBaseline)) {
       throw new Error(`resolved agent ${name} does not match the task permission baseline`);
     }

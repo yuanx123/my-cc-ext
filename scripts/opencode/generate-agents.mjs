@@ -2,7 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { readFile, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { AGENT_MAPPINGS, COMMON_REPLACEMENTS, PERMISSION_BASELINE } from "./agent-mappings.mjs";
+import { AGENT_MAPPINGS, COMMON_REPLACEMENTS, PERMISSION_BASELINE, READ_ONLY_PERMISSION } from "./agent-mappings.mjs";
 
 function normalize(source) {
   return source.replaceAll("\r\n", "\n");
@@ -43,9 +43,10 @@ function stripTrailingWhitespace(source) {
 export function generateAgent(source, mapping) {
   const parsed = parseClaudeAgent(source, mapping.source);
   const digest = createHash("sha256").update(normalize(source)).digest("hex");
+  const baseline = mapping.readOnly ? READ_ONLY_PERMISSION : PERMISSION_BASELINE;
   const permission = {
-    ...PERMISSION_BASELINE,
-    bash: { ...PERMISSION_BASELINE.bash },
+    ...baseline,
+    bash: { ...baseline.bash },
     task: Object.fromEntries([["*", "deny"], ...mapping.taskAllow.map((name) => [name, "allow"])]),
   };
   const body = stripTrailingWhitespace(
@@ -61,6 +62,13 @@ export function generateAgent(source, mapping) {
     `<!-- generated-from: ${mapping.source} -->`,
     `<!-- source-sha256: ${digest} -->`,
     "",
+    ...(mapping.readOnly ? [
+      "OpenCode 只读执行：编辑与委派被禁止。读取文件使用读取/搜索能力；Git 检查仅使用权限清单中的完整命令，不追加参数。",
+      "允许的 shell 命令：",
+      ...Object.keys(baseline.bash).filter((command) => command !== "*").map((command) => `- \`${command}\``),
+      "范围过滤在读取结果后完成。外部知识库访问需用户授权；被拒绝时按 kb-loader 的不可用分支处理。",
+      "",
+    ] : []),
     body,
     "",
   ].join("\n");

@@ -31,6 +31,20 @@ test("lint rejects direct platform tool instructions", async (t) => {
   assert.equal(violations[0].rule, "direct-tool-name");
 });
 
+test("lint catches stale paths and invalid skill names in installed OpenCode agents", async (t) => {
+  const root = await temporaryRoot(t);
+  await mkdir(path.join(root, "skills"));
+  await mkdir(path.join(root, ".opencode", "agents"), { recursive: true });
+  await writeEmptyAllowlist(root);
+  await writeFile(path.join(root, ".opencode", "agents", "review.md"), "KB: C:/legacy/rules\nUse ~/.claude/CLAUDE.md\nUse `my-ext-fix` skill\n");
+  const violations = await findViolations(root);
+  assert.deepEqual(violations.map(({ line, rule }) => ({ line, rule })), [
+    { line: 1, rule: "external-absolute-path" },
+    { line: 2, rule: "foreign-platform-reference" },
+    { line: 3, rule: "foreign-platform-reference" },
+  ]);
+});
+
 test("an exact documented allowlist entry permits one line", async (t) => {
   const root = await temporaryRoot(t);
   await mkdir(path.join(root, "skills", "demo"), { recursive: true });

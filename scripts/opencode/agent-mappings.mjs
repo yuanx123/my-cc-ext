@@ -15,8 +15,22 @@ export const PERMISSION_BASELINE = {
   external_directory: "deny",
 };
 
+export const READ_ONLY_PERMISSION = {
+  ...PERMISSION_BASELINE,
+  edit: "deny",
+  bash: {
+    "*": "deny",
+    "git status --short": "allow",
+    "git diff --no-ext-diff --no-textconv": "allow",
+    "git diff --cached --no-ext-diff --no-textconv": "allow",
+    "git log -5 --oneline": "allow",
+  },
+};
+
 export const COMMON_REPLACEMENTS = [
-  ["CLAUDE.md", "AGENTS.md and platform-specific project rules"],
+  ["~/.claude/CLAUDE.md", "当前平台适用的用户指令"],
+  ["CLAUDE.md", "AGENTS.md"],
+  ["my-ext:kb-loader", "kb-loader"],
   [".claude/worktrees/", ".worktrees/"],
   ["用 Glob", "使用文件模式搜索能力"],
   ["通过 Glob", "通过文件模式搜索能力"],
@@ -38,5 +52,5 @@ export const AGENT_MAPPINGS = [
   { source: "agents/feature-dev/AGENT.md", output: ".opencode/agents/my-ext-feature-dev.md", name: "my-ext-feature-dev", taskAllow: ["my-ext-superpowers-planner", "my-ext-code-review"], replacements: [["`superpowers-planner`", "`my-ext-superpowers-planner`"], ["由 superpowers-planner 产出", "由 my-ext-superpowers-planner 产出"], ["`code-review`", "`my-ext-code-review`"]] },
   { source: "agents/fix/AGENT.md", output: ".opencode/agents/my-ext-fix.md", name: "my-ext-fix", taskAllow: [], replacements: [] },
   { source: "agents/superpowers-planner/AGENT.md", output: ".opencode/agents/my-ext-superpowers-planner.md", name: "my-ext-superpowers-planner", taskAllow: ["my-ext-feature-dev"], replacements: [["`feature-dev` Agent", "`my-ext-feature-dev` subagent"], ["`feature-dev`", "`my-ext-feature-dev`"], ["交给 feature-dev", "交给 my-ext-feature-dev"], ["`code-review`", "`my-ext-code-review`"]] },
-  { source: "agents/code-review/AGENT.md", output: ".opencode/agents/my-ext-code-review.md", name: "my-ext-code-review", taskAllow: [], replacements: [["`fix` Agent", "`my-ext-fix` Agent"], ["`fix` skill", "`my-ext-fix` skill"]] },
+  { source: "agents/code-review/AGENT.md", output: ".opencode/agents/my-ext-code-review.md", name: "my-ext-code-review", readOnly: true, taskAllow: [], replacements: [["`fix` Agent", "`my-ext-fix` Agent"]] },
 ];

@@ -9,7 +9,7 @@ const jsonTargets = [
   { file: ".claude-plugin/marketplace.json", keys: ["plugins", 0, "version"] },
   { file: ".codex-plugin/plugin.json", keys: ["version"] },
 ];
-const docs = [".opencode/INSTALL.md", "docs/README.opencode.md", "readme.md"];
+const docs = [".opencode/INSTALL.md", "docs/README.opencode.md"];
 const pinnedVersionPattern = /#v(\d+\.\d+\.\d+)/g;
 const textualVersionPattern = /"version"\s*:\s*"(?<value>(?:\\.|[^"\\])*)"/dg;
 

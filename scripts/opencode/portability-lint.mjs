@@ -11,6 +11,10 @@ const RULES = [
 ];
 
 const RULE_IDS = new Set(RULES.map((rule) => rule.id));
+const RUNTIME_RULES = [
+  RULES.find((rule) => rule.id === "external-absolute-path"),
+  { id: "foreign-platform-reference", pattern: /~\/\.claude|CLAUDE\.md|my-ext:kb-loader|`my-ext-fix` skill/ },
+];
 
 async function markdownFiles(directory) {
   const output = [];
@@ -69,11 +73,16 @@ export async function findViolations(root) {
   }
 
   const violations = [];
-  for (const file of await markdownFiles(path.join(root, "skills"))) {
+  const runtimeFiles = await markdownFiles(path.join(root, ".opencode", "agents")).catch((error) => {
+    if (error.code === "ENOENT") return [];
+    throw error;
+  });
+  const sharedFiles = await markdownFiles(path.join(root, "skills"));
+  for (const file of [...sharedFiles, ...runtimeFiles]) {
     const relative = path.relative(root, file).split(path.sep).join("/");
     const lines = (await readFile(file, "utf8")).replaceAll("\r\n", "\n").split("\n");
     lines.forEach((line, index) => {
-      for (const rule of RULES) {
+      for (const rule of relative.startsWith("skills/") ? RULES : RUNTIME_RULES) {
         rule.pattern.lastIndex = 0;
         if (!rule.pattern.test(line)) continue;
         const lineText = line.trim();

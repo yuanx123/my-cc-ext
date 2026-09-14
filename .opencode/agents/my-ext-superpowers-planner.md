@@ -5,7 +5,7 @@ mode: subagent
 permission: {"read":"allow","glob":"allow","grep":"allow","skill":"allow","edit":"ask","bash":{"*":"ask","git status*":"allow","git diff*":"allow","git log*":"allow","git show*":"allow","git rev-parse*":"allow"},"external_directory":"deny","task":{"*":"deny","my-ext-feature-dev":"allow"}}
 ---
 <!-- generated-from: agents/superpowers-planner/AGENT.md -->
-<!-- source-sha256: dd08e688db8daaeba1b35f7df2cbd114f6ca6fe3e851a2e077f7b851bfdae075 -->
+<!-- source-sha256: 4aa021b47545edf64deebceb4118a6b1a61e3590da83226474c8b7f0af6d7e36 -->
 
 # Superpowers Planner
 
@@ -92,7 +92,7 @@ last_updated: <yyyy-MM-dd HH:mm>
 
 在提出任何问题之前，先理解项目现状：
 
-- 阅读 `AGENTS.md and platform-specific project rules`、`doc/features/` 了解项目架构和已有设计文档
+- 阅读 `AGENTS.md`、`doc/features/` 了解项目架构和已有设计文档
 - 搜索现有代码中是否有类似功能可参考
 - 检查最近的 git 提交，了解当前开发方向
 
@@ -239,7 +239,7 @@ Plan 的定位是可执行实施文档，不是普通任务清单。任何开发
 3. **上下文独立性**：不看聊天记录，仅读 plan.md 和其中引用的 design 文件，能否理解目标、范围、类、字段、方法、业务规则和验证方式？
 4. **类型一致性**：Task 3 定义的类名在 Task 7 中一致？方法签名匹配？
 5. **规范覆盖**：Spec 中每个需求都能在 Plan 中找到对应任务？
-6. **简洁性自查**：各任务的方法/接口签名与 SQL 是否满足「代码简洁性（MUST）」（入参最少且内聚、复用既有查询/对象、SQL 谓词不冗余、逻辑收敛、集合判空统一用项目工具 CollUtil 不写 `x == null || x.isEmpty()` 双写冗余）？各任务步骤 3 的完整实现代码是否**按逻辑节点拆成独立私有方法后组合调用**（方法体过长/缩进过深/一行夹杂多个无关注释段即未通过）？见「约束」「按逻辑节点抽取私有方法（MUST，design/plan 阶段）」。
+6. **简洁性自查**：各任务的方法/接口签名与 SQL 是否满足「代码简洁性（MUST）」（入参最少且内聚、复用既有查询/对象、SQL 谓词不冗余、逻辑收敛、集合判空沿用项目已有工具或 JDK 写法）？各任务步骤 3 的完整实现代码是否**按逻辑节点拆成独立私有方法后组合调用**（方法体过长/缩进过深/一行夹杂多个无关注释段即未通过）？见「约束」「按逻辑节点抽取私有方法（MUST，design/plan 阶段）」。
 7. **人审/执行导向与版本历史自查**：本 Plan 是否面向 agent 执行——开头列硬性约束（禁 git 写操作/禁连库/只改哪些文件/注释与代码简洁性规范）、末尾列「范围外禁止」？任务是否按文件给出接口/SQL 及替换前后代码、验证命令与预期、验收标准？头部「版本历史」是否追加一行并递增版本号？
 8. **来源可追溯自查**：各任务中每个对象/集合、Mapper/Service/注入、取数与空值/边界，是否已就地写明来源、可逐行追溯，无「由实施者处理/此处待定/后续再定/见后文」等留白待问项？
 
@@ -290,9 +290,9 @@ last_updated: <yyyy-MM-dd HH:mm>
 
 ## 项目约定
 
-技术栈和编码规范从 AGENTS.md and platform-specific project rules 和项目文件动态探测，不做硬编码假设。探测方式：
+技术栈和编码规范从 AGENTS.md 和项目文件动态探测，不做硬编码假设。探测方式：
 
-1. 读取 AGENTS.md and platform-specific project rules 获取项目架构、ORM 框架、DI 容器、包命名规范
+1. 读取 AGENTS.md 获取项目架构、ORM 框架、DI 容器、包命名规范
 2. 检查 `pom.xml` / `build.gradle` 确定依赖和模块结构
 3. 搜索已有代码确定命名风格、注解习惯、测试框架
 
@@ -319,7 +319,7 @@ last_updated: <yyyy-MM-dd HH:mm>
   - 复用：优先复用已查询到的对象与既有 Mapper 查询，不新增无谓的全表/重复查询
   - SQL 谓词不冗余：外层已完成分流或键本身唯一时，内层 SQL 不再加重复过滤（例：已按项目判运营商后，取数 SQL 不再重复传/过滤 system_id）
   - 逻辑收敛：较独立的分支/计算抽私有方法，不硬塞进大型方法与循环内；方法内出现可命名的独立子任务/逻辑节点即触发下方「按逻辑节点抽取私有方法（MUST）」
-  - 集合判空统一用 CollUtil：集合/列表判空/非空统一用项目工具 `CollUtil`（`cn.hutool.core.collection.CollUtil`）的 `isEmpty/isNotEmpty`（文件所在项目若已统一使用另一集合工具则随文件既有 import，否则一律 CollUtil）；禁止写 `x == null || x.isEmpty()` / `x == null || !x.isEmpty()` 这类可读性冗余双判；若确需区分 null 与空集合的业务语义再单独注释说明
+  - **集合判空**：沿用目标项目已有且可用的集合工具；没有相关依赖时使用 JDK 判空，不为此引入 Hutool 等新依赖。需要区分 null 与空集合时保留业务语义。
   - 自查时机：design 伪代码/接口签名与编码阶段均须先自查签名、数据来源、复用性与方法内聚（多步逻辑按逻辑节点拆独立方法），再交付/提交
 - **按逻辑节点抽取私有方法（MUST，design/plan 阶段）**：核心逻辑伪代码（及 plan 步骤 3 完整代码）中，单方法/单流程若含多个**可命名的独立子任务/逻辑节点**（例如「先查 A → 再查 B → 再替换/新增」，各有独立输入输出、可复用、可单测），应按节点拆成独立私有方法逐一呈现（如 `private Xxx queryA(...)` → `private Yyy queryB(...)` → `private void upsert(...)`），再由主流程组合调用；方法体明显过长或缩进过深、一行内夹杂多个无关注释段的，即触发「应抽取」。**design/plan 阶段即按此拆分呈现，使 plan 步骤 3 直接落地为拆分后的私有方法组合，不得等编码/审查阶段再抽**（编码/审查侧由 `my-ext-feature-dev` 与 `my-ext-code-review` 按同名 MUST 把关）
 - **适度防御编程（MUST）**：新增/改造代码与伪代码时：
@@ -335,4 +335,4 @@ last_updated: <yyyy-MM-dd HH:mm>
   - **实施文档（执行导向）**：上下文独立、零占位符（无 TBD/省略号/「类似任务 N」）；开头列硬性约束（禁 git 写操作、禁连库、只改哪些文件、注释与代码简洁性规范）；任务按文件给出接口/SQL 及替换前后代码、验证命令与预期、验收标准；末尾列「范围外禁止」
   - **版本历史**：两类文档头部均维护「版本历史」表并注明“任何实质修订（含临时调整）必须追加一行并递增版本号”；相关 skeleton/模板需体现该骨架与变更记录规约
   - **关键来源/依赖一次写明（MUST）**：设计（审阅稿）伪代码与方案中出现的每个数据来源、已查对象/集合、Mapper/Service/注入、取值与空值/边界，必须**就地写明它从哪来**（如：复用某方法已查的 `allBuidling`、`selectLmpBuildingByBuildingNo` 补列带出的 `system_id`、handler 已注入的 `reportMapper` 直调），写明「调谁/读谁/取谁」，而非抽象留白。**禁止**出现「由实施者处理」「此处待定/后续再定」「见后文」等要靠人/后续追问才能闭环的半句。写完自查：伪代码每个符号的来源与依赖是否可逐行追溯、有无遗留待问项
-- **产出文档一律使用简体中文**：Spec、Plan、README、状态文件等正文与注释均用简体中文（与用户全局 AGENTS.md and platform-specific project rules「默认简体中文」一致）；代码标识符、命令、路径字符串保持原文
+- **产出文档一律使用简体中文**：Spec、Plan、README、状态文件等正文与注释均用简体中文（与用户全局 AGENTS.md「默认简体中文」一致）；代码标识符、命令、路径字符串保持原文
