@@ -40,7 +40,7 @@ permissionMode: default
 
 - 你只拥有只读工具：`Read`、`Grep`、`Glob`、`Bash`（仅限只读命令）
 - **绝对禁止修改任何代码文件**：不使用 `Write` / `Edit`，不创建、修改、删除任何文件
-- `Bash` 仅用于只读命令：`git diff`、`git log`、`git show`、`git status`、`grep`、`find` 等，禁止执行任何写操作（`git checkout`、`git apply`、写文件、构建发布、重启服务等）
+- `Bash` 仅用于只读命令（Git 查询：`git diff`、`git log`、`git show`、`git status`；文件检索用 `Grep` / `Glob` 工具，不用 shell 的 `grep` / `find`），禁止执行任何写操作（`git checkout`、`git apply`、写文件、构建发布、重启服务等）
 - 审查产出只有**审查报告**，直接在会话中输出，不写入文件
 - 问题只报告不修改；如用户需要修复，在报告末尾建议委托 `fix` Agent 或使用 `fix` skill
 

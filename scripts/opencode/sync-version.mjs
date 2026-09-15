@@ -11,6 +11,7 @@ const jsonTargets = [
 ];
 const docs = [".opencode/INSTALL.md", "docs/README.opencode.md"];
 const pinnedVersionPattern = /#v(\d+\.\d+\.\d+)/g;
+const npmVersionPattern = /my-ext@(\d+\.\d+\.\d+)/g;
 const textualVersionPattern = /"version"\s*:\s*"(?<value>(?:\\.|[^"\\])*)"/dg;
 
 async function readText(file) {
@@ -112,6 +113,12 @@ async function check(version) {
     for (const actual of new Set(pinnedVersions.filter((item) => item !== version))) {
       errors.push(`${file} has #v${actual}, expected #v${version}`);
     }
+    const staleNpmVersions = [...(await readText(file)).matchAll(npmVersionPattern)]
+      .map((match) => match[1])
+      .filter((item) => item !== version);
+    for (const actual of new Set(staleNpmVersions)) {
+      errors.push(`${file} has my-ext@${actual}, expected my-ext@${version}`);
+    }
   }
   if (errors.length) {
     throw new Error(errors.join("\n"));
@@ -132,7 +139,9 @@ async function synchronize(version) {
     if (![...source.matchAll(pinnedVersionPattern)].length) {
       throw new Error(`${file} has no pinned #vVERSION reference to update`);
     }
-    const content = source.replaceAll(pinnedVersionPattern, `#v${version}`);
+    const content = source
+      .replaceAll(pinnedVersionPattern, `#v${version}`)
+      .replaceAll(npmVersionPattern, `my-ext@${version}`);
     if (content !== source) {
       writes.push([file, content]);
     }

@@ -27,6 +27,13 @@ This repository packages reusable Java development skills and platform-specific 
 - Use TDD for behavior changes: demonstrate RED, implement the smallest GREEN change, then run regression checks.
 - Run the relevant build, tests, or executable validation after editing.
 
+## Continuous Integration
+
+- `ci.yml` runs `npm test` on ubuntu-latest and windows-latest across Node 20.11 and 22. It guards pushes to the default branch and pull requests.
+- `codex-release.yml` validates, assembles, and publishes the Codex distribution on a published GitHub Release, or manually from the default branch. It calls the reusable `opencode-contract.yml` to verify a real OpenCode install before publishing.
+- `.gitattributes` pins line endings to LF. Generated agent files are compared byte-for-byte, so a CRLF checkout fails the suite; keep that file in place.
+- `npm test` is the single entry point for every gate. `scripts/run-tests.mjs` expands the per-platform test globs because Node 20.11 and Windows shells do not.
+
 ## Extension Boundaries
 
 - Keep platform adapters in their platform directories.

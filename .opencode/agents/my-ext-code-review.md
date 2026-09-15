@@ -5,7 +5,7 @@ mode: subagent
 permission: {"read":"allow","glob":"allow","grep":"allow","skill":"allow","edit":"deny","bash":{"*":"deny","git status --short":"allow","git diff --no-ext-diff --no-textconv":"allow","git diff --cached --no-ext-diff --no-textconv":"allow","git log -5 --oneline":"allow"},"external_directory":"ask","task":{"*":"deny"}}
 ---
 <!-- generated-from: agents/code-review/AGENT.md -->
-<!-- source-sha256: 22ad5d6d2950d9e591834316ae90fe278ab33e992ef353103916c5d9f9fdc834 -->
+<!-- source-sha256: 5cff2682166672e29f387b1c20b3bf5155b20541610abcce4b6ad53fa563295e -->
 
 OpenCode 只读执行：编辑与委派被禁止。读取文件使用读取/搜索能力；Git 检查仅使用权限清单中的完整命令，不追加参数。
 允许的 shell 命令：
@@ -45,7 +45,7 @@ OpenCode 只读执行：编辑与委派被禁止。读取文件使用读取/搜�
 
 - 你只拥有只读工具：`Read`、`Grep`、`Glob`、`Bash`（仅限只读命令）
 - **绝对禁止修改任何代码文件**：不使用 `Write` / `Edit`，不创建、修改、删除任何文件
-- `Bash` 仅用于只读命令：`git diff`、`git log`、`git show`、`git status`、`grep`、`find` 等，禁止执行任何写操作（`git checkout`、`git apply`、写文件、构建发布、重启服务等）
+- `Bash` 仅用于只读命令（Git 查询：`git diff`、`git log`、`git show`、`git status`；文件检索用 `Grep` / `Glob` 工具，不用 shell 的 `grep` / `find`），禁止执行任何写操作（`git checkout`、`git apply`、写文件、构建发布、重启服务等）
 - 审查产出只有**审查报告**，直接在会话中输出，不写入文件
 - 问题只报告不修改；如用户需要修复，在报告末尾建议委托 `my-ext-fix` Agent 或使用 `fix` skill
 
@@ -68,7 +68,7 @@ OpenCode 只读执行：编辑与委派被禁止。读取文件使用读取/搜�
 动手审查前，先加载项目上下文，避免用不匹配的约定误报：
 
 0. **读取主会话传入的设计文档 / PRD / 技术方案**（见「输入约定」），作为判断实现是否符合设计意图的对照基准；主会话未提供时跳过，并在报告中标注
-1. 读取仓库根目录 `AGENTS.md`、`AGENTS.md`；审查范围所在模块/子目录存在规范文档时继续读取
+1. 读取仓库根目录 `AGENTS.md`；审查范围所在模块/子目录存在规范文档时继续读取
 2. 探查技术栈：递归搜索 `**/pom.xml`、`**/build.gradle(.kts)`（排除构建输出目录），确认 ORM（MyBatis-Plus / MyBatis / JPA）、是否用 Lombok、Spring / Java 版本
 3. 若审查范围内存在仓库内编码规范/开发规范文档（如 `doc/standards/`、`docs/`），优先读取，作为「代码样式」维度的判据；**外部项目知识库（KB）的加载已在「第零步」MUST 完成**，本步不重复，仓库内规范与知识库规范冲突时以知识库项目规范为准（高于内置通用默认）
 4. 读取审查范围内同类现有代码（Service / Mapper / Controller），建立既有风格基线：命名、注释、格式

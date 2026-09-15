@@ -11,8 +11,13 @@ const RULES = [
 ];
 
 const RULE_IDS = new Set(RULES.map((rule) => rule.id));
+const externalAbsolutePathRule = RULES.find((rule) => rule.id === "external-absolute-path");
+if (!externalAbsolutePathRule) {
+  throw new Error("portability-lint: 缺少规则 external-absolute-path，无法构建运行时规则");
+}
+
 const RUNTIME_RULES = [
-  RULES.find((rule) => rule.id === "external-absolute-path"),
+  externalAbsolutePathRule,
   { id: "foreign-platform-reference", pattern: /~\/\.claude|CLAUDE\.md|my-ext:kb-loader|`my-ext-fix` skill/ },
 ];
 

@@ -33,7 +33,7 @@ node --version
 
 项目级安装时，将该配置加入项目的 `opencode.json`；用户级安装时，将其加入用户级 `opencode.json`。不要从默认分支安装。发布元数据也可以指定完整的 40 位 commit，此时只能用该不可变完整 commit 替换标签。
 
-OpenCode 当前委托 Bun 安装包，因此 Git 安装是已验证的兼容路径，但该行为不是永久的 OpenCode API 保证。如果 Git 包安装变得不兼容，可在同一包发布后使用 `my-ext@1.0.10` 作为 npm 兜底安装方式；两种方式使用相同的 `package.json` 入口。
+OpenCode 当前委托 Bun 安装包，因此 Git 安装是已验证的兼容路径，但该行为不是永久的 OpenCode API 保证。如果 Git 包安装变得不兼容，可在同一包发布后使用 `my-ext@1.0.29` 作为 npm 兜底安装方式；两种方式使用相同的 `package.json` 入口。
 
 ## 注册机制
 

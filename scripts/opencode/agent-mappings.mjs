@@ -29,6 +29,7 @@ export const READ_ONLY_PERMISSION = {
 
 export const COMMON_REPLACEMENTS = [
   ["~/.claude/CLAUDE.md", "当前平台适用的用户指令"],
+  ["`CLAUDE.md`、`AGENTS.md`", "`AGENTS.md`"],
   ["CLAUDE.md", "AGENTS.md"],
   ["my-ext:kb-loader", "kb-loader"],
   [".claude/worktrees/", ".worktrees/"],

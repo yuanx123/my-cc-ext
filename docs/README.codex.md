@@ -22,18 +22,22 @@ codex plugin list --marketplace my-cc-ext --json
 使用 $add-javadoc，为 Service 补充文档注释。
 ```
 
-| 工作流入口 | 用途 |
-|---|---|
-| `$feature-dev-agent` | 功能开发 |
-| `$superpowers-planner-agent` | 设计与计划 |
-| `$code-review-agent` | 深度代码审查 |
-| `$fix-agent` | 复杂缺陷排查 |
-| `$db-ops-agent` | 数据库、SQL、Entity、Mapper |
-| `$cc-ext-dev-agent` | 插件与扩展开发 |
+Agent 通过以下工作流 Skill 暴露，正文仍只维护在 `agents/<name>/AGENT.md`：
+
+| 工作流入口 | Agent 唯一来源 | 用途 |
+|---|---|---|
+| `$feature-dev-agent` | `agents/feature-dev/AGENT.md` | 功能开发 |
+| `$superpowers-planner-agent` | `agents/superpowers-planner/AGENT.md` | 设计与计划 |
+| `$code-review-agent` | `agents/code-review/AGENT.md` | 深度代码审查 |
+| `$fix-agent` | `agents/fix/AGENT.md` | 复杂缺陷排查 |
+| `$db-ops-agent` | `agents/db-ops/AGENT.md` | 数据库、SQL、Entity、Mapper |
+| `$cc-ext-dev-agent` | `agents/cc-ext-dev/AGENT.md` | 插件与扩展开发 |
 
 共享技能也可直接使用，例如 `$gen-java-entity`、`$add-javadoc`。需要知识库时，在目标项目的 `AGENTS.md` 中声明「知识库根：」和实际路径，并允许访问。未配置且项目没有强制要求时，按项目已有规范执行。
 
 这些入口以工作流 Skill 运行，模型、权限和子代理能力由当前 Codex 会话决定。适配细节见 [Agent 执行契约](../codex/agent-adapter.md)。
+
+薄入口源码位于 `codex/skills/<name>-agent/SKILL.md`，仅在 Codex 安装包中位于 `skills/<name>-agent/SKILL.md`。入口统一先读取 [Agent 执行契约](../codex/agent-adapter.md)，再读取上表对应的 Agent 原文。
 
 ## 升级与卸载
 

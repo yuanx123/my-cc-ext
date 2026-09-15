@@ -16,6 +16,6 @@
 
 配置钩子会以幂等方式把根目录 `skills/` 追加到 `skills.paths`，把 `.opencode/bootstrap.md` 追加到 `config.instructions`。由于包内 Agent 文件不会被自动发现，钩子还会在 `config.agent` 中显式注册 6 个 Agent。存在同名用户 Agent 时，以用户配置为准。共享 Skill 保留原有的不带前缀名称，因此可能与注册同名 Skill 的其他插件冲突。
 
-Git 安装是基于 OpenCode 当前 Bun 安装器验证过的兼容路径，并非永久 API 保证。如果后续 Git 包安装机制发生变化，可在同一包发布后使用 `my-ext@1.0.10` 作为 npm 兜底安装方式。
+Git 安装是基于 OpenCode 当前 Bun 安装器验证过的兼容路径，并非永久 API 保证。如果后续 Git 包安装机制发生变化，可在同一包发布后使用 `my-ext@1.0.29` 作为 npm 兜底安装方式。
 
 项目级与用户级配置、Windows 注意事项、升级和卸载说明详见 `docs/README.opencode.md`。
