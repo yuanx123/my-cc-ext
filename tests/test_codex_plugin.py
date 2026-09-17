@@ -105,7 +105,7 @@ class CodexDocumentationTest(unittest.TestCase):
         self.assertIn("Claude Code", readme)
         self.assertIn("Codex", readme)
         self.assertIn(
-            "codex plugin marketplace add huhuhu-999/my-cc-ext", readme
+            "codex plugin marketplace add yuanx123/my-cc-ext", readme
         )
         self.assertIn(".codex-plugin/plugin.json", readme)
 

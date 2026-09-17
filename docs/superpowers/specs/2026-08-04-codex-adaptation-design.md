@@ -117,7 +117,7 @@ tests/
 用户通过 Codex CLI 添加 Git 市场：
 
 ```bash
-codex plugin marketplace add huhuhu-999/my-cc-ext
+codex plugin marketplace add yuanx123/my-cc-ext
 ```
 
 随后在 Codex/ChatGPT 桌面端的 Plugins 目录中选择该市场并安装 `my-ext`，重启或

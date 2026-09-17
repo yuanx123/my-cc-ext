@@ -132,7 +132,7 @@ class CodexDocumentationTest(unittest.TestCase):
         readme = (ROOT / "readme.md").read_text(encoding="utf-8")
         self.assertIn("Claude Code", readme)
         self.assertIn("Codex", readme)
-        self.assertIn("codex plugin marketplace add huhuhu-999/my-cc-ext", readme)
+        self.assertIn("codex plugin marketplace add yuanx123/my-cc-ext", readme)
         self.assertIn(".codex-plugin/plugin.json", readme)
 
 
@@ -176,7 +176,7 @@ git commit -m "test: define Codex plugin adaptation contract"
   "author": {
     "name": "yuanziquan"
   },
-  "repository": "https://github.com/huhuhu-999/my-cc-ext",
+  "repository": "https://github.com/yuanx123/my-cc-ext",
   "license": "MIT",
   "keywords": ["java", "database", "sql", "mybatis", "code-review", "tdd", "skill", "agent"],
   "skills": "./skills/",
@@ -187,7 +187,7 @@ git commit -m "test: define Codex plugin adaptation contract"
     "developerName": "yuanziquan",
     "category": "Developer Tools",
     "capabilities": ["Read", "Write"],
-    "websiteURL": "https://github.com/huhuhu-999/my-cc-ext",
+    "websiteURL": "https://github.com/yuanx123/my-cc-ext",
     "defaultPrompt": [
       "使用 my-ext 规划并实现这个 Java 后端需求。",
       "使用 my-ext 审查并修复当前 Java 代码。"
@@ -330,7 +330,7 @@ git commit -m "feat: expose shared agents to Codex"
 ## Codex 安装
 
 ```bash
-codex plugin marketplace add huhuhu-999/my-cc-ext
+codex plugin marketplace add yuanx123/my-cc-ext
 ```
 
 添加市场后，在 Codex/ChatGPT 桌面端的 Plugins 目录选择该市场并安装

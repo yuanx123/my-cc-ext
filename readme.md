@@ -32,7 +32,7 @@ Java 开发全流程 AI 编程插件，支持 Claude Code、OpenCode 与 Codex�
 ## Claude Code 安装
 
 ```bash
-/plugin marketplace add https://github.com/huhuhu-999/my-cc-ext.git
+/plugin marketplace add https://github.com/yuanx123/my-cc-ext.git
 /plugin install my-ext@my-cc-ext
 claude plugins enable my-ext
 ```
@@ -42,7 +42,7 @@ claude plugins enable my-ext
 先添加 Git 市场：
 
 ```bash
-codex plugin marketplace add huhuhu-999/my-cc-ext
+codex plugin marketplace add yuanx123/my-cc-ext
 ```
 
 然后在 Codex/ChatGPT 桌面端的 Plugins 目录中选择 `my-cc-ext` 市场并安装
