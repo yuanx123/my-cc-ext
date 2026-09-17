@@ -234,9 +234,9 @@ test("missing skills directory and bootstrap file fail before registration", asy
 
 test("local repository plus self Git or package spec warns while registration stays idempotent", async (t) => {
   for (const specifier of [
-    "https://github.com/huhuhu-999/my-cc-ext.git#v1.1.0",
-    "git+https://github.com/huhuhu-999/my-cc-ext.git#v1.1.0",
-    "git@github.com:huhuhu-999/my-cc-ext.git",
+    "https://github.com/yuanx123/my-cc-ext.git#v1.1.0",
+    "git+https://github.com/yuanx123/my-cc-ext.git#v1.1.0",
+    "git@github.com:yuanx123/my-cc-ext.git",
     "my-ext@1.1.0",
   ]) {
     await t.test(specifier, async (t) => {
@@ -263,8 +263,8 @@ test("local repository plus self Git or package spec warns while registration st
   }
 
   for (const lookalike of [
-    "https://not-github.com/huhuhu-999/my-cc-ext.git",
-    "https://github.com.example.test/huhuhu-999/my-cc-ext.git",
+    "https://not-github.com/yuanx123/my-cc-ext.git",
+    "https://github.com.example.test/yuanx123/my-cc-ext.git",
   ]) {
     await t.test(`rejects ${lookalike}`, async (t) => {
       const root = await createPackageFixture(t);

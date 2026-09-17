@@ -47,7 +47,7 @@ test("main README links platform guides and Claude guide preserves commands", as
   assert.doesNotMatch(source, /codex plugin|opencode debug config|my-cc-ext\.git#v/);
   const claudeGuide = await readFile(path.join(root, "docs", "README.claude.md"), "utf8");
   for (const command of [
-    "/plugin marketplace add https://github.com/huhuhu-999/my-cc-ext.git",
+    "/plugin marketplace add https://github.com/yuanx123/my-cc-ext.git",
     "/plugin install my-ext@my-cc-ext",
     "claude plugins enable my-ext",
     "/plugin uninstall my-ext@my-cc-ext",

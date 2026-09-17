@@ -32,7 +32,7 @@ const REVIEW_BASH_PERMISSION = {
   "git log -5 --oneline": "allow",
 };
 
-const GIT_SPEC_PATTERN = /^my-ext@(?:git\+)?https:\/\/github\.com\/huhuhu-999\/my-cc-ext\.git#(?:v\d+\.\d+\.\d+|[0-9a-fA-F]{40})$|^my-ext@(?:git\+ssh:\/\/git@github\.com\/huhuhu-999\/my-cc-ext\.git|git@github\.com:huhuhu-999\/my-cc-ext\.git)#(?:v\d+\.\d+\.\d+|[0-9a-fA-F]{40})$/;
+const GIT_SPEC_PATTERN = /^my-ext@(?:git\+)?https:\/\/github\.com\/yuanx123\/my-cc-ext\.git#(?:v\d+\.\d+\.\d+|[0-9a-fA-F]{40})$|^my-ext@(?:git\+ssh:\/\/git@github\.com\/yuanx123\/my-cc-ext\.git|git@github\.com:yuanx123\/my-cc-ext\.git)#(?:v\d+\.\d+\.\d+|[0-9a-fA-F]{40})$/;
 
 function immutableSpecError() {
   return new Error("MY_EXT_GIT_SPEC must be an exact my-ext GitHub HTTPS, git+HTTPS, or SSH spec ending in an immutable #vX.Y.Z tag or full 40-hex commit");

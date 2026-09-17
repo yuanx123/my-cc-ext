@@ -161,7 +161,7 @@ OpenCode 通过项目或用户 `opencode.json` 的 `plugin` 数组安装 Git 包
 ```json
 {
   "plugin": [
-    "my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.0.10"
+    "my-ext@git+https://github.com/yuanx123/my-cc-ext.git#v1.0.10"
   ]
 }
 ```

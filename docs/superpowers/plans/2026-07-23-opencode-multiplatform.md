@@ -741,7 +741,7 @@ test("local entry plus package spec warns but remains idempotent", async () => {
   const { createHooks } = await importPlugin(root);
   const warnings = [];
   const hooks = createHooks({ packageRoot: root, localEntry: true, logger: { info() {}, warn(message) { warnings.push(message); } } });
-  const config = { plugin: ["my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.0.10"] };
+  const config = { plugin: ["my-ext@git+https://github.com/yuanx123/my-cc-ext.git#v1.0.10"] };
   await hooks.config(config);
   await hooks.config(config);
   assert.equal(warnings.length, 2);
@@ -834,7 +834,7 @@ export function registerConfig(config, { skillsPath, bootstrapPath, definitions,
 }
 
 function isSelfSpecifier(value) {
-  return typeof value === "string" && (value.startsWith("my-ext@") || value.includes("huhuhu-999/my-cc-ext"));
+  return typeof value === "string" && (value.startsWith("my-ext@") || value.includes("yuanx123/my-cc-ext"));
 }
 
 export function createHooks({ packageRoot = PACKAGE_ROOT, localEntry = existsSync(path.join(PACKAGE_ROOT, ".git")), logger = console } = {}) {
@@ -1071,7 +1071,7 @@ Requires OpenCode >=1.15.10 and Node.js >=20.11.
 Outside this repository, add a fixed release tag to project or user `opencode.json`:
 
 ```json
-{"plugin":["my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.0.10"]}
+{"plugin":["my-ext@git+https://github.com/yuanx123/my-cc-ext.git#v1.0.10"]}
 ```
 
 This repository already loads `.opencode/plugins/my-ext.js` as a local plugin automatically. During local development, do not add the package to the `plugin` array or it can load twice.
@@ -1096,7 +1096,7 @@ Git installation is a tested compatibility path tied to OpenCode's current Bun i
 Project and user configuration use the same fixed release specifier:
 
 ```json
-{"plugin":["my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.0.10"]}
+{"plugin":["my-ext@git+https://github.com/yuanx123/my-cc-ext.git#v1.0.10"]}
 ```
 
 Never install from the default branch. A release may instead publish a full 40-character commit in release metadata; replace the tag only with that immutable full commit.
@@ -1210,7 +1210,7 @@ test("real smoke test skips only without explicit gate", () => {
 });
 
 test("enabled gate requires an immutable Git spec", () => {
-  const env = { ...process.env, MY_EXT_RUN_OPENCODE_SMOKE: "1", MY_EXT_GIT_SPEC: "my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git" };
+  const env = { ...process.env, MY_EXT_RUN_OPENCODE_SMOKE: "1", MY_EXT_GIT_SPEC: "my-ext@git+https://github.com/yuanx123/my-cc-ext.git" };
   const result = spawnSync(process.execPath, ["scripts/opencode/smoke-test.mjs"], { cwd: root, env, encoding: "utf8" });
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /fixed #vX.Y.Z tag or full 40-character commit/);
@@ -1291,7 +1291,7 @@ on:
       git_spec:
         description: Fixed my-ext Git tag or full commit specifier
         required: true
-        default: my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.0.10
+        default: my-ext@git+https://github.com/yuanx123/my-cc-ext.git#v1.0.10
 
 jobs:
   contract:
@@ -1399,7 +1399,7 @@ node -e "const fs=require('node:fs');const p=fs.readFileSync('.opencode/plugins/
 
 ```powershell
 $env:MY_EXT_RUN_OPENCODE_SMOKE="1"
-$env:MY_EXT_GIT_SPEC="my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.0.10"
+$env:MY_EXT_GIT_SPEC="my-ext@git+https://github.com/yuanx123/my-cc-ext.git#v1.0.10"
 npm run smoke:opencode
 ```
 

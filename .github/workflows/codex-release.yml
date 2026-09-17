@@ -55,7 +55,7 @@ jobs:
     needs: build
     uses: ./.github/workflows/opencode-contract.yml
     with:
-      git_spec: my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#${{ github.sha }}
+      git_spec: my-ext@git+https://github.com/${{ github.repository }}.git#${{ github.sha }}
 
   publish:
     needs: [build, opencode-contract]

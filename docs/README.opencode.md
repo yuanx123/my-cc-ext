@@ -26,7 +26,7 @@ node --version
 ```json
 {
   "plugin": [
-    "my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.0.29"
+    "my-ext@git+https://github.com/yuanx123/my-cc-ext.git#v1.0.29"
   ]
 }
 ```

@@ -5,7 +5,7 @@
   "author": {
     "name": "yuanziquan"
   },
-  "repository": "https://github.com/huhuhu-999/my-cc-ext",
+  "repository": "https://github.com/yuanx123/my-cc-ext",
   "license": "MIT",
   "keywords": ["java", "database", "sql", "mybatis", "code-review", "tdd", "skill", "agent"],
   "skills": "./skills/",
@@ -16,7 +16,7 @@
     "developerName": "yuanziquan",
     "category": "Developer Tools",
     "capabilities": ["Read", "Write"],
-    "websiteURL": "https://github.com/huhuhu-999/my-cc-ext",
+    "websiteURL": "https://github.com/yuanx123/my-cc-ext",
     "defaultPrompt": [
       "使用 feature-dev-agent 根据需求文档推进 Java 功能开发。",
       "使用 code-review-agent 审查当前改动，只报告问题。"

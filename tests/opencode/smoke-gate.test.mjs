@@ -8,7 +8,7 @@ import { assertConfigContract, runSmoke } from "../../scripts/opencode/smoke-tes
 
 const root = path.resolve(import.meta.dirname, "../..");
 const script = path.join(root, "scripts", "opencode", "smoke-test.mjs");
-const immutableSpec = "my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.1.0";
+const immutableSpec = "my-ext@git+https://github.com/yuanx123/my-cc-ext.git#v1.1.0";
 const agentNames = [
   "my-ext-code-review",
   "my-ext-db-ops",
@@ -102,11 +102,11 @@ test("actual plugin registration satisfies the installation contract", async () 
 
 test("enabled smoke rejects mutable and lookalike Git specs before invoking OpenCode", () => {
   const invalid = [
-    "my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git",
-    "my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#main",
-    "my-ext@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.1",
-    "my-ext@git+https://github.com.example.test/huhuhu-999/my-cc-ext.git#v1.1.0",
-    "other@git+https://github.com/huhuhu-999/my-cc-ext.git#v1.1.0",
+    "my-ext@git+https://github.com/yuanx123/my-cc-ext.git",
+    "my-ext@git+https://github.com/yuanx123/my-cc-ext.git#main",
+    "my-ext@git+https://github.com/yuanx123/my-cc-ext.git#v1.1",
+    "my-ext@git+https://github.com.example.test/yuanx123/my-cc-ext.git#v1.1.0",
+    "other@git+https://github.com/yuanx123/my-cc-ext.git#v1.1.0",
   ];
 
   for (const spec of invalid) {

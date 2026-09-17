@@ -8,7 +8,7 @@
       "name": "my-ext",
       "source": {
         "source": "git-subdir",
-        "url": "https://github.com/huhuhu-999/my-cc-ext.git",
+        "url": "https://github.com/yuanx123/my-cc-ext.git",
         "ref": "codex-dist",
         "path": "./plugins/my-ext"
       },

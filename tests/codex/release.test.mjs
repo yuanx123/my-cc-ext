@@ -11,7 +11,7 @@ test("Git marketplace resolves the assembled plugin from the distribution branch
   assert.equal(catalog.name, "my-cc-ext");
   assert.deepEqual(catalog.plugins.map((plugin) => plugin.name), ["my-ext"]);
   assert.deepEqual(catalog.plugins[0].source, {
-    source: "git-subdir", url: "https://github.com/huhuhu-999/my-cc-ext.git",
+    source: "git-subdir", url: "https://github.com/yuanx123/my-cc-ext.git",
     ref: "codex-dist", path: "./plugins/my-ext",
   });
   assert.equal(catalog.plugins[0].policy.installation, "AVAILABLE");

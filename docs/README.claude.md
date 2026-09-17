@@ -5,7 +5,7 @@
 在 Claude Code 对话中执行：
 
 ```text
-/plugin marketplace add https://github.com/huhuhu-999/my-cc-ext.git
+/plugin marketplace add https://github.com/yuanx123/my-cc-ext.git
 /plugin install my-ext@my-cc-ext
 ```
 

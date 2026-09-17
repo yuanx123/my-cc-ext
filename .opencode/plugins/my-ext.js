@@ -181,8 +181,8 @@ function isSelfSpecifier(value) {
   }
   return value === "my-ext"
     || value.startsWith("my-ext@")
-    || /^(?:git\+)?https:\/\/github\.com\/huhuhu-999\/my-cc-ext(?:\.git)?(?:[?#].*)?$/i.test(value)
-    || /^git@github\.com:huhuhu-999\/my-cc-ext(?:\.git)?(?:#.*)?$/i.test(value);
+    || /^(?:git\+)?https:\/\/github\.com\/yuanx123\/my-cc-ext(?:\.git)?(?:[?#].*)?$/i.test(value)
+    || /^git@github\.com:yuanx123\/my-cc-ext(?:\.git)?(?:#.*)?$/i.test(value);
 }
 
 export function createHooks({ packageRoot = PACKAGE_ROOT, localEntry, logger = console } = {}) {

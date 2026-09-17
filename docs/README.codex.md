@@ -5,7 +5,7 @@
 使用支持插件命令的 Codex 和新版 Git，在终端执行：
 
 ```powershell
-codex plugin marketplace add huhuhu-999/my-cc-ext
+codex plugin marketplace add yuanx123/my-cc-ext
 codex plugin add my-ext@my-cc-ext
 codex plugin list --marketplace my-cc-ext --json
 ```
@@ -69,8 +69,8 @@ codex plugin list --marketplace my-cc-ext --json
    ```
 
 3. 检查并提交源码、生成文件和版本同步改动，合并到 `master` 并推送。
-4. 打开 [新建 Release 页面](https://github.com/huhuhu-999/my-cc-ext/releases/new)：新建标签 `v<版本号>`，Target 选 `master`，填写更新说明，不勾选 **Set as a pre-release**，点击 **Publish release**。例如包版本为 `1.0.30`，标签就是 `v1.0.30`；不要复用旧标签。
-5. 打开 [Codex Release 工作流](https://github.com/huhuhu-999/my-cc-ext/actions/workflows/codex-release.yml)，确认 `build`、`opencode-contract`、`publish` 全部成功，再按上面的更新命令验证安装版本。
+4. 打开 [新建 Release 页面](https://github.com/yuanx123/my-cc-ext/releases/new)：新建标签 `v<版本号>`，Target 选 `master`，填写更新说明，不勾选 **Set as a pre-release**，点击 **Publish release**。例如包版本为 `1.0.30`，标签就是 `v1.0.30`；不要复用旧标签。
+5. 打开 [Codex Release 工作流](https://github.com/yuanx123/my-cc-ext/actions/workflows/codex-release.yml)，确认 `build`、`opencode-contract`、`publish` 全部成功，再按上面的更新命令验证安装版本。
 
 工作流会执行仓库测试、组装插件、验证 OpenCode 真实安装，再更新 `codex-dist`。源码目录保持原样，分发分支由工作流维护；任一门禁失败都不会发布新产物。
 
