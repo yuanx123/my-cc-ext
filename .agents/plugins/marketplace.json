@@ -1,0 +1,20 @@
+{
+  "name": "my-cc-ext-local",
+  "interface": {
+    "displayName": "Java Development Toolchain"
+  },
+  "plugins": [
+    {
+      "name": "my-ext",
+      "source": {
+        "source": "local",
+        "path": "./plugins/my-ext"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

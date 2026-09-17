@@ -1,0 +1,47 @@
+{
+  "name": "my-ext",
+  "version": "1.0.29",
+  "description": "Java development agents and shared skills for Claude Code, OpenCode and Codex",
+  "type": "module",
+  "main": ".opencode/plugins/my-ext.js",
+  "files": [
+    ".codex-plugin/plugin.json",
+    "codex/agent-adapter.md",
+    "agents/*/AGENT.md",
+    ".opencode/plugins/my-ext.js",
+    ".opencode/bootstrap.md",
+    ".opencode/agents/",
+    ".opencode/INSTALL.md",
+    "skills/*/SKILL.md",
+    "skills/add-javadoc/scripts/scan_javadoc.py",
+    "skills/add-javadoc/templates/",
+    "skills/design-doc-writer/templates/",
+    "skills/gen-java-enum/EXAMPLES.md",
+    "skills/gen-pgsql-ddl/EXAMPLES.md",
+    "skills/gen-pgsql-ddl/REFERENCE.md",
+    "skills/gen-pgsql-ddl/template/",
+    "AGENTS.md",
+    "readme.md",
+    "docs/README.claude.md",
+    "docs/README.opencode.md",
+    "docs/README.codex.md"
+  ],
+  "engines": {
+    "node": ">=20.11",
+    "opencode": ">=1.15.10"
+  },
+  "scripts": {
+    "generate:agents": "node scripts/opencode/generate-agents.mjs",
+    "check:agents": "node scripts/opencode/generate-agents.mjs --check",
+    "lint:portability": "node scripts/opencode/portability-lint.mjs",
+    "version:check": "node scripts/opencode/sync-version.mjs --check",
+    "version:sync": "node scripts/opencode/sync-version.mjs --write",
+    "test:opencode": "node scripts/run-tests.mjs opencode",
+    "test:codex": "node scripts/run-tests.mjs codex",
+    "stage:codex": "node scripts/codex/stage-marketplace.mjs",
+    "test:python": "python -m unittest discover -s skills/add-javadoc/tests -p test_*.py -v",
+    "test": "npm run lint:portability && npm run check:agents && npm run version:check && npm run test:codex && npm run test:opencode && npm run test:python",
+    "smoke:opencode": "node scripts/opencode/smoke-test.mjs"
+  },
+  "license": "MIT"
+}
